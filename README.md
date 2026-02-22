@@ -7,7 +7,7 @@
 * 🛒 Carrito de compras
 * 🔍 Búsqueda de productos
 * 🏷️ Gestionar productos
-* 💳 Métodos de pago seguros
+* 💳 Métodos de pago seguros con stripe
 
 ## Instrucciones de Instalación
 1. Clona el repositorio:
@@ -23,30 +23,14 @@
    npm install
    ```
 
-## Estructura del Proyecto
-| Carpeta/Archivo       | Descripción                      |
-|-----------------------|----------------------------------|
-| `src/`                | Contiene los archivos de código. |
-| `public/`             | Archivos estáticos y index.html. |
-| `README.md`           | Documentación del proyecto.      |
+### Descripción de cada módulo:
 
-## Uso
-Para iniciar la aplicación, usa el siguiente comando:
-```bash
-npm start
-```
+| Módulo | Descripción |
+|--------|-------------|
+| **core** | Configuración central de la aplicación Django, settings y configuraciones globales |
+| **shop** | Lógica principal de la tienda, vistas y controladores |
+| **products** | Catálogo de productos, modelos y gestión de inventario |
+| **cart** | Sistema de carrito de compras, agregar/eliminar productos |
+| **orders** | Gestión de pedidos, historial de compras y estados |
+| **payment** | Procesamiento de pagos e integración con proveedores |
 
-## Directrices de Contribución
-1. Haz un fork del repositorio.
-2. Crea una nueva rama para tu característica (`git checkout -b feature/miCaracteristica`).
-3. Realiza cambios y confírmalos (`git commit -m 'Añadir nueva característica'`).
-4. Envía tus cambios a tu fork (`git push origin feature/miCaracteristica`).
-5. Abre una solicitud de extracción.
-
-## Licencia
-Este proyecto está bajo la Licencia MIT. Ver el archivo [LICENSE](LICENSE) para más detalles.
-
-## Información de Contacto
-Si tienes alguna pregunta, no dudes en contactarme:
-- **Nombre**: Marlon
-- **Email**: marlon@example.com
