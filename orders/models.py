@@ -4,7 +4,6 @@ from django.conf import settings
 
 class Order(models.Model):
     full_name = models.CharField(max_length=100, null=True, blank=True)
-    # last_name = models.CharField(max_length=50)
     email = models.EmailField()
     address = models.CharField(max_length=250)
     postal_code = models.CharField(max_length=20)
