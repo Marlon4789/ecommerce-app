@@ -9,17 +9,42 @@
 
 <div class="row align-items-center">
 
+<!-- ============================= -->
+<!-- IMAGEN PRODUCTO -->
+<!-- ============================= -->
+
 <div class="col-md-6 text-center">
 
 {% if product.image %}
 <img src="{{ product.image.url }}"
-class="detail-image">
+class="detail-image img-fluid">
 {% endif %}
 
 </div>
 
 
+<!-- ============================= -->
+<!-- INFO PRODUCTO -->
+<!-- ============================= -->
+
 <div class="col-md-6">
+
+<!-- BADGES -->
+
+<div class="product-badges mb-2">
+
+<span class="badge bg-coffee">
+Café Premium
+</span>
+
+{% if product.stock < 5 and product.stock > 0 %}
+<span class="badge bg-warning text-dark">
+Últimas unidades
+</span>
+{% endif %}
+
+</div>
+
 
 <h2 class="detail-title">
 {{ product.name }}
@@ -29,11 +54,44 @@ class="detail-image">
 ${{ product.current_price|floatformat:"0"|intcomma }}
 </p>
 
+
+<!-- INFO DEL PRODUCTO -->
+
 <ul class="product-info">
 
-<li><strong>Peso:</strong> {{ product.weight }} g</li>
-<li><strong>Molienda:</strong> {{ product.get_grinding_type_display }}</li>
-<li><strong>Stock:</strong> {{ product.stock }}</li>
+<li>
+<strong>Peso:</strong> {{ product.weight }} g
+</li>
+
+<li>
+<strong>Molienda:</strong> {{ product.get_grinding_type_display }}
+</li>
+
+<li>
+
+<strong>Stock:</strong>
+
+{% if product.stock > 10 %}
+
+<span class="stock-good">
+Disponible
+</span>
+
+{% elif product.stock > 0 %}
+
+<span class="stock-low">
+Quedan {{ product.stock }} unidades
+</span>
+
+{% else %}
+
+<span class="stock-out">
+Agotado
+</span>
+
+{% endif %}
+
+</li>
 
 </ul>
 
@@ -44,15 +102,18 @@ ${{ product.current_price|floatformat:"0"|intcomma }}
 
 {% csrf_token %}
 
-<!-- CANTIDAD -->
 
-<div class="mb-4">
+<!-- ============================= -->
+<!-- CANTIDAD -->
+<!-- ============================= -->
+
+<div class="col text-center text-md-start mb-4">
 
 <label class="form-label fw-semibold">
 Cantidad
 </label>
 
-<div class="quantity-selector">
+<div class="quantity-selector justify-content-center justify-content-md-start">
 
 <button type="button" class="qty-btn" onclick="decreaseQty()">
 -
@@ -74,15 +135,26 @@ class="qty-input">
 
 </div>
 
+
 {{ cart_add_form.override }}
 
-<button class="btn btn-coffee">
+
+<!-- BOTON AGREGAR AL CARRITO -->
+
+<button class="btn btn-coffee btn-lg w-100 add-cart-btn mb-3">
+
+<i class="fa-solid fa-cart-shopping"></i>
+
 Agregar al carrito
+
 </button>
+
 
 <a href="{% url 'shop:product_list' %}"
 class="btn btn-outline-secondary">
+
 Volver
+
 </a>
 
 </form>
@@ -98,6 +170,11 @@ Producto agotado
 </div>
 
 </div>
+
+
+<!-- ============================= -->
+<!-- DESCRIPCION -->
+<!-- ============================= -->
 
 <div class="row mt-5">
 
@@ -115,11 +192,20 @@ Producto agotado
 
 </div>
 
+
+<!-- ============================= -->
+<!-- SCRIPT CANTIDAD -->
+<!-- ============================= -->
+
 <script>
 
 function increaseQty(){
 let qty = document.getElementById("quantity");
+let max = parseInt(qty.max);
+
+if(parseInt(qty.value) < max){
 qty.value = parseInt(qty.value) + 1;
+}
 }
 
 function decreaseQty(){
@@ -128,7 +214,6 @@ let qty = document.getElementById("quantity");
 if(qty.value > 1){
 qty.value = parseInt(qty.value) - 1;
 }
-
 }
 
 </script>
