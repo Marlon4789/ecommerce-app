@@ -1,23 +1,54 @@
 {% extends "layouts/base.html" %}
 {% load humanize %}
 {% block title %}Proceso de Pago{% endblock %}
-{% block content %}
-<div class="container my-5 py-5" style="height: 28rem;">
-  <div class="card shadow-sm mt-3 ">
-    <div class="card-header bg-success">
-      <h1 class="h4 mb-0">Proceso de Pago</h1>
-    </div>
-    <div class="card-body">
-      <p class="lead">
-        El total de su pedido es:
-        <strong>${{ order.get_total_cost|floatformat:"0"|intcomma }}</strong> COP
-      </p>
-      <form method="post" action="{% url 'payment:process' %}">
-        {% csrf_token %}
-        <button type="submit" class="btn btn-warning btn-block shadow-sm"><strong>Proceder al Pago</strong></button>
-      </form>
-    </div>
-  </div>
-</div>
-{% endblock %}
 
+{% block content %}
+
+<section class="payment-section">
+
+<div class="container">
+
+<div class="row justify-content-center">
+
+<div class="col-lg-5">
+
+<div class="payment-card">
+
+<h2 class="payment-title">
+<i class="fa-solid fa-credit-card"></i>
+Proceso de pago
+</h2>
+
+<p class="payment-total">
+
+Total a pagar
+
+<strong>
+${{ order.get_total_cost|floatformat:"0"|intcomma }} COP
+</strong>
+
+</p>
+
+<form method="post" action="{% url 'payment:process' %}">
+
+{% csrf_token %}
+
+<button type="submit" class="btn btn-coffee w-100">
+
+Proceder al pago
+
+</button>
+
+</form>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+{% endblock %}

@@ -1,53 +1,136 @@
 {% extends "layouts/base.html" %}
-{% block title %}Detalles del Producto{% endblock %}
+{% load humanize %}
 
+{% block title %}{{ product.name }}{% endblock %}
 
 {% block content %}
-{% load humanize %}
-<div class="container mt-4 pt-2 pt-md-5">
-  <div class="row mt-4 pt-2">
-    <!-- Imagen del Producto -->
-    <div class="col-12 col-md-6 mb-4 mb-md-0 d-flex justify-content-center justify-content-md-end">
-      {% if product.image %}
-      <img style="max-height: 20rem;max-width: 20rem; object-fit: cover;" src="{{ product.image.url }}" alt="{{ product.name }}" class="img-fluid rounded shadow-sm">
-      {% endif %}
-    </div>
-    <!-- Detalles del Producto -->
-    <div class="col-12 col-md-6 d-flex flex-column justify-content-center">
-      <h3 class="h4">{{ product.name }}</h3>
-      <p class="lead">Precio: ${{ product.current_price|floatformat:"0" | intcomma }}</p>
-      <ul class="list-unstyled">
-        <li><strong>Peso:</strong> {{ product.weight }} g</li>
-        <li><strong>Tipo de molienda:</strong> {{ product.get_grinding_type_display }}</li>
-        <li><strong>Stock disponible:</strong> {{ product.stock }}</li>
-      </ul>
-      {% if product.stock > 0 %}
-      <form action="{% url 'cart:cart_add' product.id %}" method="post" class="mb-3">
-        {% csrf_token %}
-        <div class="form-group">
-          <p><strong>Cantidad</strong> {{ cart_add_form.quantity }}</p>
-        </div>
-        {{ cart_add_form.override }}
-        <div class="d-block">
-          <button type="submit fixed-top" class="btn btn-warning rounded-0">Agregar al carrito</button>
-          <a href="{% url 'shop:product_list' %}" class="btn btn-outline-secondary rounded-0">Regresar</a>
-        </div>
-      </form>
-      {% else %}
-      <p class="text-danger font-weight-bold">Lo sentimos, este producto está agotado.</p>
-      {% endif %}
-      
-    </div>
-  </div>
-  
-  <!-- Sección de Descripción  -->
-  <div class="container-fluid">
-    <div class="row mt-3">
-      <div class="col-12 col-md-5 offset-md-6">
-            <h5>Descripción del Producto</h5>
-            <p>{{ product.description|linebreaks }}</p>
-      </div>
-    </div>
-    </div>
+
+<div class="container product-detail">
+
+<div class="row align-items-center">
+
+<div class="col-md-6 text-center">
+
+{% if product.image %}
+<img src="{{ product.image.url }}"
+class="detail-image">
+{% endif %}
+
 </div>
+
+
+<div class="col-md-6">
+
+<h2 class="detail-title">
+{{ product.name }}
+</h2>
+
+<p class="detail-price">
+${{ product.current_price|floatformat:"0"|intcomma }}
+</p>
+
+<ul class="product-info">
+
+<li><strong>Peso:</strong> {{ product.weight }} g</li>
+<li><strong>Molienda:</strong> {{ product.get_grinding_type_display }}</li>
+<li><strong>Stock:</strong> {{ product.stock }}</li>
+
+</ul>
+
+
+{% if product.stock > 0 %}
+
+<form action="{% url 'cart:cart_add' product.id %}" method="post">
+
+{% csrf_token %}
+
+<!-- CANTIDAD -->
+
+<div class="mb-4">
+
+<label class="form-label fw-semibold">
+Cantidad
+</label>
+
+<div class="quantity-selector">
+
+<button type="button" class="qty-btn" onclick="decreaseQty()">
+-
+</button>
+
+<input type="number"
+name="quantity"
+id="quantity"
+value="1"
+min="1"
+max="{{ product.stock }}"
+class="qty-input">
+
+<button type="button" class="qty-btn" onclick="increaseQty()">
++
+</button>
+
+</div>
+
+</div>
+
+{{ cart_add_form.override }}
+
+<button class="btn btn-coffee">
+Agregar al carrito
+</button>
+
+<a href="{% url 'shop:product_list' %}"
+class="btn btn-outline-secondary">
+Volver
+</a>
+
+</form>
+
+{% else %}
+
+<p class="text-danger fw-bold">
+Producto agotado
+</p>
+
+{% endif %}
+
+</div>
+
+</div>
+
+<div class="row mt-5">
+
+<div class="col-md-8">
+
+<h4>Descripción</h4>
+
+<p>
+{{ product.description|linebreaks }}
+</p>
+
+</div>
+
+</div>
+
+</div>
+
+<script>
+
+function increaseQty(){
+let qty = document.getElementById("quantity");
+qty.value = parseInt(qty.value) + 1;
+}
+
+function decreaseQty(){
+let qty = document.getElementById("quantity");
+
+if(qty.value > 1){
+qty.value = parseInt(qty.value) - 1;
+}
+
+}
+
+</script>
+
 {% endblock %}

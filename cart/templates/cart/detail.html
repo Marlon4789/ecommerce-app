@@ -1,43 +1,187 @@
 {% extends "layouts/base.html" %}
-{% block title %}Carrito de Compras{% endblock %}
 {% load humanize %}
+
+{% block title %}
+Carrito de compras
+{% endblock %}
+
 {% block content %}
-<div class="container mt-5 py-5 pb-5" style="height: 27rem;">
-  <h3 class="mb-4">Carrito de Compras</h3>
-  <div class="row">
-    {% for item in cart %}
-    <div class="col-12 col-md-6 col-lg-4 mb-4">
-      <div class="card h-100 shadow-sm border border-secondary rounded-0">
-        <div class="card-body">
-          <h5 class="card-title">{{ item.product.name }}</h5>
-          <p class="card-text mb-1"><strong>Precio:</strong> ${{ item.price|floatformat:"0"|intcomma|cut:"," }}</p>
-          <p class="card-text mb-3"><strong>Total:</strong> ${{ item.total_price|floatformat:"0"|intcomma|cut:"," }}</p>
-          <div class="mb-3">
-            <form action="{% url 'cart:cart_add' item.product.id %}" method="post" class="d-flex align-items-start">
-              {% csrf_token %}
-              <div class="form-group mr-2 mt-1">
-                {{ item.update_quantity_form.quantity }}
-              </div>
-              <input type="hidden" name="override" value="True">
-              <button type="submit" class="btn btn-sm btn-secondary rounded-0">Actualizar</button>
-            </form>
-          </div>
-          <form action="{% url 'cart:cart_remove' item.product.id %}" method="post">
-            {% csrf_token %}
-            <button type="submit" class="btn btn-sm btn-danger rounded-0">Eliminar</button>
-          </form>
-        </div>
-      </div>
-    </div>
-    {% endfor %}
-  </div>
-  <div class="d-block justify-content-start justify-content-md-center">
-    
-    <div class="col-12 col-md-4 offset-md-4 d-block justify-content-start justify-content-md-center">
-      <p class="lead">Total: ${{ cart.get_total_price|floatformat:"0"|intcomma|cut:"," }}</p>
-      <a href="{% url 'shop:product_list' %}" class="btn btn-secondary mr-2 btn-block">Continuar comprando</a>
-      <a href="{% url 'orders:order_create' %}" class="btn btn-warning btn-block"><strong>Checkout</strong></a>
-    </div>
-  </div>
+
+<!-- ====================================== -->
+<!-- SHOPPING CART -->
+<!-- ====================================== -->
+
+<section class="cart-section">
+
+<div class="container">
+
+<h3 class="cart-title pt-3 mb-4">
+Tu carrito
+</h3>
+
+{% if cart|length > 0 %}
+
+<!-- TABLA RESPONSIVE -->
+
+<div class="table-responsive">
+
+<table class="table cart-table align-middle">
+
+<thead class="table-light">
+
+<tr>
+
+<th>Producto</th>
+<th>Precio</th>
+<th>Cantidad</th>
+<th>Total</th>
+<th></th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+{% for item in cart %}
+
+<tr>
+
+<td class="fw-medium">
+{{ item.product.name }}
+</td>
+
+<td>
+${{ item.price|floatformat:"0"|intcomma }}
+</td>
+
+<td>
+
+<form action="{% url 'cart:cart_add' item.product.id %}" method="post" class="d-flex gap-2 align-items-center">
+{% csrf_token %}
+
+<input type="number"
+name="quantity"
+value="{{ item.quantity }}"
+min="1"
+class="form-control form-control-sm"
+style="width:70px;">
+
+<input type="hidden" name="override" value="True">
+
+<button type="submit" class="btn btn-sm btn-outline-primary">
+<i class="fa-solid fa-rotate"></i>
+</button>
+
+</form>
+
+</td>
+
+
+<td class="fw-bold">
+${{ item.total_price|floatformat:"0"|intcomma }}
+</td>
+
+<td>
+
+<form action="{% url 'cart:cart_remove' item.product.id %}" method="post" style="display:inline;">
+{% csrf_token %}
+
+<button type="submit" class="btn btn-sm btn-outline-danger">
+<i class="fa-solid fa-trash"></i>
+</button>
+
+</form>
+
+</td>
+
+</tr>
+
+{% endfor %}
+
+</tbody>
+
+</table>
+
 </div>
+
+
+<!-- TOTAL Y BOTONES -->
+
+<div class="cart-actions mt-2 text-center text-md-center">
+
+<div class="row d-flex justify-content-center align-items-center">
+
+
+
+
+
+<div class="col-md-6 text-md-end">
+
+ <h4 class="mb-3">
+
+Total:
+
+<strong>
+
+${{ cart.get_total_price|floatformat:"0"|intcomma }}
+
+</strong>
+
+</h4>
+
+<a href="{% url 'orders:order_create' %}"
+class="btn btn-coffee mb-3 mb-md-0">
+
+Finalizar compra
+
+</a>
+
+</div>
+
+<div class="col-md-6 text-md-center mb-3 mb-md-0">
+
+<a href="{% url 'shop:product_list' %}"
+class="btn btn-coffee-outline mt-md-5">
+
+<i class="fa-solid fa-arrow-left"></i>
+Seguir comprando
+
+</a>
+
+</div>
+
+</div>
+
+</div>
+
+{% else %}
+
+<!-- CARRITO VACÍO -->
+
+<div class="text-center py-5">
+
+<i class="fa-solid fa-cart-shopping fa-3x mb-3 text-muted"></i>
+
+<h4>Tu carrito está vacío</h4>
+
+<p class="text-muted">
+Agrega productos para comenzar tu compra.
+</p>
+
+<a href="{% url 'shop:product_list' %}"
+class="btn btn-coffee mt-3">
+
+Ver productos
+
+</a>
+
+</div>
+
+{% endif %}
+
+</div>
+
+</section>
+
 {% endblock %}

@@ -1,104 +1,134 @@
 {% load static %}
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <title>{% block title %}Kaboha{% endblock %}</title>
-  <!-- Bootstrap CSS -->
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-  
-   <!-- FontAwesome para íconos -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
-  
-  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>{% block title %}Kaboha Coffee{% endblock %}</title>
+
+<!-- Bootstrap -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<!-- FontAwesome -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<!-- Google Font -->
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="{% static 'css/style.css' %}">
 </head>
-<body style="background-color: rgb(255, 255, 255); font-style: oblique;">
-  <!-- Navbar -->
-  <nav class="navbar navbar-expand-lg navbar-dark fixed-top" style="background-color:rgb(14, 14, 14)">
-    <a class="navbar-brand text-danger" href="{% url 'shop:product_list' %}"><strong>Coffee Shop</strong></a>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-    <!-- <div class="collapse navbar-collapse" id="navbarSupportedContent">
-      <ul class="navbar-nav ml-auto">
-        <li class="nav-item">
-          <a class="nav-link" href="{% url 'cart:cart_detail' %}">
-            Carrito: 
-            {% with total_items=cart|length %}
-              {{ total_items }}
-            {% endwith %}
-          </a>
-        </li>
-      </ul>
-    </div> -->
 
-    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-      <ul class="navbar-nav ml-auto text-danger">
-        <div class="col d-md-flex align-ifems-center">
-          <li class="mx-md-2">Inicio</li>
-          <li>Blog</li>
-        </div>
-        <li class="nav-item position-md-relative">
-          <a class="nav-link d-flex align-items-start text-danger" href="{% url 'cart:cart_detail' %}">
-            <i class="fas fa-shopping-cart position-relative"></i>
-            {% with total_items=cart|length %}
-              {% if total_items > 0 %}
-                <span class="badge badge-pill badge-danger position-md-absolute" 
-                      style="top:0; right: 0; font-size: 0.5rem; margin-top: -8px;">
-                  {{ total_items }}
-                </span>
-              {% endif %}
-            {% endwith %}
-          </a>
-        </li>
-        
-      </ul>
-    </div>
+<body>
 
-  </nav>
+<!-- NAVBAR -->
+<nav class="navbar navbar-expand-lg navbar-dark coffee-navbar sticky-top">
+<div class="container">
 
-  <!-- Contenido principal -->
-  <div class="container-fluid">
-    {% block content %}
-    {% endblock %}
-  </div>
+<a class="navbar-brand fw-bold" href="{% url 'shop:product_list' %}">
+<i class="fa-solid fa-mug-hot"></i> Kaboha Coffee
+</a>
 
-  <footer class="text-white py-4" style="background-color: rgb(14, 14, 14); margin-top: 7rem;">
-    <div class="container">
-      <div class="row">
-        <!-- Información de la Tienda -->
-        <div class="col-md-4 mb-3 mb-md-0">
-          <h5 class="text-danger">Coffee Shop</h5>
-          <p class="small">
-            Tienda online de cafés especiales. Calidad, tradición y sabor en cada taza.
-            © 2025 Coffee Shop. Todos los derechos reservados.
-          </p>
-        </div>
-        <!-- Datos de Contacto -->
-        <div class="col-md-4 mb-3 mb-md-0">
-          <h5>Contacto</h5>
-          <ul class="list-unstyled small">
-            <li><i class="fas fa-envelope mr-2"></i>info@Coffeeshop.com</li>
-            <li><i class="fas fa-phone mr-2"></i>+1 234 567 890</li>
-            <li><i class="fas fa-map-marker-alt mr-2"></i>Calle Falsa 123, Ciudad, País</li>
-          </ul>
-        </div>
-        <!-- Redes Sociales -->
-        <div class="col-md-4 text-md-center">
-          <h5>Síguenos</h5>
-          <a href="#" class="text-white mr-2"><i class="fab fa-facebook-f fa-lg"></i></a>
-          <a href="#" class="text-white mr-2"><i class="fab fa-instagram fa-lg"></i></a>
-          <a href="#" class="text-white mr-2"><i class="fab fa-youtube fa-lg"></i></a>
-          <a href="#" class="text-white mr-2"><i class="fab fa-whatsapp fa-lg"></i></a>
-        </div>
-      </div>
-    </div>
-  </footer>
-  
+<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+<span class="navbar-toggler-icon"></span>
+</button>
 
-  <!-- Bootstrap JS y dependencias -->
-  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
+<div class="collapse navbar-collapse" id="navbarNav">
+
+<ul class="navbar-nav ms-auto align-items-lg-center">
+
+<li class="nav-item">
+<a class="nav-link" href="{% url 'shop:product_list' %}">Inicio</a>
+</li>
+
+<li class="nav-item">
+<a class="nav-link" href="#products">Productos</a>
+</li>
+
+<li class="nav-item ms-lg-3">
+
+<a class="nav-link position-relative cart-icon"
+href="{% url 'cart:cart_detail' %}">
+
+<i class="fa-solid fa-cart-shopping"></i>
+
+{% with total_items=cart|length %}
+{% if total_items > 0 %}
+<span class="cart-badge">
+{{ total_items }}
+</span>
+{% endif %}
+{% endwith %}
+
+</a>
+
+</li>
+
+</ul>
+
+</div>
+</div>
+</nav>
+
+
+<!-- CONTENIDO -->
+<main class="main-content">
+{% block content %}
+{% endblock %}
+</main>
+
+
+<!-- FOOTER -->
+<footer class="coffee-footer">
+
+<div class="container">
+
+<div class="row gy-4">
+
+<div class="col-md-4">
+<h5>Kaboha Coffee</h5>
+<p class="footer-text">
+Café premium de origen. Cultivado con pasión por caficultores
+y llevado directamente a tu taza.
+</p>
+</div>
+
+<div class="col-md-4">
+<h5>Contacto</h5>
+<ul class="footer-list">
+<li><i class="fa-solid fa-envelope"></i> info@kaboha.com</li>
+<li><i class="fa-solid fa-phone"></i> +57 300 000 0000</li>
+<li><i class="fa-solid fa-location-dot"></i> Risaralda, Colombia</li>
+</ul>
+</div>
+
+<div class="col-md-4 text-md-end">
+<h5>Síguenos</h5>
+
+<div class="social-icons">
+
+<a href="#"><i class="fab fa-instagram"></i></a>
+<a href="#"><i class="fab fa-facebook"></i></a>
+<a href="#"><i class="fab fa-youtube"></i></a>
+<a href="#"><i class="fab fa-whatsapp"></i></a>
+
+</div>
+
+</div>
+
+</div>
+
+<hr>
+
+<p class="copyright">
+© 2026 Kaboha Coffee. Todos los derechos reservados.
+</p>
+
+</div>
+</footer>
+
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
 </body>
 </html>

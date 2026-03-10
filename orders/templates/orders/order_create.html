@@ -1,53 +1,87 @@
 {% extends "layouts/base.html" %}
 {% block title %}Crear Pedido{% endblock %}
 {% load humanize %}
+
 {% block content %}
-<div class="container mt-5 py-5" style="height: 28rem;">
-  <div class="shadow-sm">
-    <div class="card-header bg-success">
-      <h1 class="h4 mb-0">Crear Pedido</h1>
-    </div>
 
-    <div>
-      <ul class="list-group mb-4">
-        <li class="list-group-item d-flex justify-content-between align-items-center">
-          <span><strong>Total</strong></span>
-          <strong>${{ cart.get_total_price|floatformat:"0"|intcomma|cut:"," }}</strong>
-        </li>
-      </ul>
-      <form method="post" novalidate>
-        {% csrf_token %}
-        <div class="form-row">
-          <div class="form-group col-md-6">
-            
-            {{ form.full_name }}
-          </div>
-          
-        </div>
-        <div class="row">
-          <div class="form-group col-md-6">
-            
-            {{ form.email }}
-          </div>
-          <div class="form-group col-md-6">
-            
-            {{ form.address }}
-          </div>
-        </div>
-        <div class="form-row">
-          <div class="form-group col-md-6">
-            
-            {{ form.postal_code }}
-          </div>
-          <div class="form-group col-md-6">
-            
-            {{ form.city }}
-          </div>
-        </div>
-        <button type="submit" class="btn btn-warning btn-block rounded-0 shadow-sm"><strong>Realizar Pedido</strong></button>
-      </form>
-    </div>
-  </div>
+<section class="checkout-section">
+
+<div class="container">
+
+<div class="row justify-content-center">
+
+<div class="col-lg-6">
+
+<div class="checkout-card">
+
+<h2 class="checkout-title">
+<i class="fa-solid fa-bag-shopping"></i> Finalizar compra
+</h2>
+
+<!-- TOTAL -->
+
+<div class="order-summary">
+
+<span>Total del pedido</span>
+
+<strong class="order-price">
+${{ cart.get_total_price|floatformat:"0"|intcomma|cut:"," }}
+</strong>
+
 </div>
-{% endblock %}
 
+
+<form method="post" novalidate class="checkout-form">
+
+{% csrf_token %}
+
+<div class="form-group mb-3">
+<label>Nombre completo</label>
+{{ form.full_name }}
+</div>
+
+<div class="row">
+
+<div class="col-md-6 mb-3">
+<label>Email</label>
+{{ form.email }}
+</div>
+
+<div class="col-md-6 mb-3">
+<label>Dirección</label>
+{{ form.address }}
+</div>
+
+</div>
+
+<div class="row">
+
+<div class="col-md-6 mb-3">
+<label>Código postal</label>
+{{ form.postal_code }}
+</div>
+
+<div class="col-md-6 mb-3">
+<label>Ciudad</label>
+{{ form.city }}
+</div>
+
+</div>
+
+<button type="submit" class="btn btn-coffee w-100">
+Realizar pedido
+</button>
+
+</form>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+{% endblock %}

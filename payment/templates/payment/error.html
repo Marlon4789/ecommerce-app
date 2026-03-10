@@ -3,17 +3,39 @@
 {% block title %}Error en el Pago{% endblock %}
 
 {% block content %}
-<div class="container my-5">
-    <div class="alert alert-danger">
-        <h4>Error en el Pago</h4>
-        <p>{{ error }}</p>
-        
-        {% if debug_info %}
-        <hr>
-        <h5>Información de Debug:</h5>
-        <pre>{{ debug_info }}</pre>
-        {% endif %}
-    </div>
-    <a href="{% url 'payment:process' %}" class="btn btn-primary">Intentar de nuevo</a>
+
+<section class="payment-error">
+
+<div class="container">
+
+<div class="row justify-content-center">
+
+<div class="col-md-6">
+
+<div class="error-card">
+
+<i class="fa-solid fa-circle-xmark error-icon"></i>
+
+<h2>Error en el pago</h2>
+
+<p>{{ error }}</p>
+
+{% if debug_info %}
+<pre class="debug-box">{{ debug_info }}</pre>
+{% endif %}
+
+<a href="{% url 'payment:process' %}" class="btn btn-coffee">
+Intentar nuevamente
+</a>
+
 </div>
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+
 {% endblock %}

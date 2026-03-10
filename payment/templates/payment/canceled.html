@@ -1,9 +1,44 @@
 {% extends "layouts/base.html" %}
-{% block title %}Pago Cancelado{% endblock %}
+
+{% block title %}Pago cancelado{% endblock %}
+
 {% block content %}
-<div class="container mt-5">
-  <h1 class="text-danger">Pago Cancelado</h1>
-  <p>Su pago ha sido cancelado. Si fue un error, por favor intente de nuevo.</p>
-  <a href="/cart/" class="btn btn-warning">Regresar al Carrito</a>
+
+<section class="payment-cancel">
+
+<div class="container">
+
+<div class="row justify-content-center">
+
+<div class="col-md-6 text-center">
+
+<div class="cancel-card">
+
+<i class="fa-solid fa-triangle-exclamation cancel-icon"></i>
+
+<h2>Pago cancelado</h2>
+
+<p>
+
+Tu pago fue cancelado.  
+Puedes intentarlo nuevamente.
+
+</p>
+
+<a href="{% url 'cart:cart_detail' %}" class="btn btn-coffee">
+
+Volver al carrito
+
+</a>
+
 </div>
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+
 {% endblock %}

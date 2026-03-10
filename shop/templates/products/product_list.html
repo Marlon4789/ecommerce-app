@@ -1,165 +1,110 @@
 {% extends "layouts/base.html" %}
-{% block title %}Lista de Productos{% endblock %}
 {% load humanize %}
+{% block title %}Productos{% endblock %}
 
 {% block content %}
 
-<div class="row mt-2 mt-md-2">
-    <img class="img-fluid mb-2 mt-4 pt-4 w-100" style="max-height: 28rem; object-fit:cover;" src="https://cdn.pixabay.com/photo/2017/03/27/14/18/coffee-2179028_1280.jpg" alt="portada">
-</div>
+<!-- ====================================== -->
+<!-- HERO SECTION RESPONSIVE -->
+<!-- ====================================== -->
 
-<div class="col-12 text-center my-4" id="products">
-    <h4 class="display-6"><strong>☕ Disfruta el Aroma y Sabor del Café Kaboha 🌿</strong></h4>
-    <p class="blockquote-footer" style="font-size: medium;">
-      Calidad premium, 100% puro y de origen especial. ¡Haz tu pedido hoy!  
-    </p>
-</div>
-  
+<section class="hero-coffee">
 
-<div class="container mt-2">
-    <div class="row">
-        {% for product in products %}
-        <div class="col-12 col-md-3 mb-4">
-            <div class="card h-100 shadow-sm rounded-0" style="background-color: rgba(14, 14, 14, 0);">
-                {% if product.image %}
-                <img src="{{ product.image.url }}" class="card-img-top rounded-0" style="height: 14rem; object-fit: cover;" alt="{{ product.name }}">
-                {% endif %}
-                <div class="card-body d-flex flex-column justify-content-between">
-                    <p class="card-title">{{ product.name }}</p>
-                    <p class="card-text fw-light">Precio: ${{ product.current_price|floatformat:"0" | intcomma }}</p>
-                </div>
-                <div class="mx-2 mb-2">
-                    <a href="{% url 'shop:product_detail' slug=product.slug %}" class="btn btn-sm btn-block rounded-0" style="background-color: rgb(255, 153, 0);">
-                        <strong>Ver Detalles</strong>
-                    </a>
-                </div>
-            </div>
-        </div>
-        {% endfor %}
-    </div>
-</div>
+<div class="container">
 
-<div class="col-12 text-center my-4">
-  <h4 class="display-6"><strong>🌿 Café Especial Kaboha – Sabor Único de Origen ☕</strong></h4>
-  <p class="blockquote-footer" style="font-size: medium;">Para amantes de un buen  <cite title="Source Title">café</cite></p>
+<div class="row align-items-center">
+
+<!-- TEXTO HERO -->
+
+<div class="col-lg-6 text-center text-lg-start">
+
+<h1 class="hero-title">
+
+El verdadero sabor del  
+<span>Café Colombiano</span>
+
+</h1>
+
+<p class="hero-subtitle">
+
+Disfruta café premium cultivado en las montañas de Colombia.  
+Aroma intenso y sabor auténtico.
+
+</p>
+
+<a href="#products" class="btn btn-coffee mt-3">
+
+Ver productos
+
+</a>
+
 </div>
 
 
-  <div class="row g-0 position-relative" style="background-color:rgb(14, 14, 14); font-style: oblique;">
-    <div class="col-md-6 mb-md-0 p-md-4 w-md-100">
-      <img src="https://cdn.pixabay.com/photo/2019/03/14/07/01/coffee-4054303_1280.jpg" class="w-100 rounded-0" alt="...">
-    </div>
-    <div class="col-md-6 p-4 ps-md-0 text-white">
-      <h5 class="mt-0 text-warning"></h5>
-      <p>Disfruta de un café especial, cultivado con pasión y dedicación en fincas seleccionadas. Disfruta de granos de alta calidad, con notas únicas y un aroma inigualable. Directo del caficultor a tu taza, garantizando frescura y un impacto positivo en el medioambiente.</p>
-      <p>✅ 100% Arábica de origen</p>
-      <p>✅ Proceso artesanal y sostenible</p>
-      <p>✅ Sabor excepcional en cada sorbo</p>
-      <p><strong>¡Haz tu pedido ya hoy mismo! 🚀</strong></p>
-      
-      <a href="#products" class="btn btn-warning rounded-0"><strong>Ver Productos  <i class="fas fa-arrow-right"></i></strong></a>
-    </div>
-  </div>
+<!-- IMAGEN HERO (SOLO DESKTOP) -->
 
+<div class="col-lg-6 text-center d-none d-lg-block">
 
-  <!-- Boton de subscrición -->
-  <div class="container my-5 pt-4">
-    <div class="row justify-content-center">
-        <div class="col-12 col-md-8">
-            <h4 class="text-center mb-3" style="color: rgb(14, 14, 14);">Suscríbete y recibe promociones exclusivas y enterarte de nuevos productos</h4>
-            <form id="subscription-form" method="post" class="d-flex justify-content-center">
-                {% csrf_token %}
-                <input type="email" name="email" class="form-control me-2 email-input rounded-0 " placeholder="Ingresa tu correo" required>
-                <button type="submit" class="btn text-white px-4 rounded-0" style="background-color: rgb(14, 14, 14);">Enviar</button>
-            </form>
-            <div id="response-message" class="text-center mt-3"></div>
-        </div>
-    </div>
+<img
+src="https://media.istockphoto.com/id/489377142/es/foto/blanco-taza-de-caf%C3%A9-con-granos-de-caf%C3%A9-sobre-fondo-oscuro.jpg?s=612x612&w=0&k=20&c=k9Gd_xcL99_7A3SIuwVSLN3MMNjOwXVBE7n4dkQatw0="
+class="hero-image"
+alt="Café">
+
 </div>
 
- <!-- Sección de Redes Sociales -->
- <div class="container mt-5">
-    <div class="row justify-content-center align-items-center" style="color: rgb(14, 14, 14);">
-        <div class="col-12">
-            <h4 class="text-center mb-3">¡Síguenos en nuestras redes sociales!</h4>
-        </div>
-        <div class="col-auto">
-            <a href="https://www.youtube.com" target="_blank" style="color: rgb(14, 14, 14);" class="text-decoration-none social-icon">
-                <i class="fab fa-youtube fa-2x"></i>
-            </a>
-        </div>
-        <div class="col-auto">
-            <a href="https://www.instagram.com" target="_blank" style="color: rgb(14, 14, 14);" class="text-decoration-none social-icon">
-                <i class="fab fa-instagram fa-2x"></i>
-            </a>
-        </div>
-        <div class="col-auto">
-            <a href="https://www.facebook.com" target="_blank" style="color: rgb(14, 14, 14);" class="text-decoration-none social-icon">
-                <i class="fab fa-facebook fa-2x"></i>
-            </a>
-        </div>
-        <div class="col-auto">
-            <a href="https://wa.me/1234567890" target="_blank" style="color: rgb(14, 14, 14);" class="text-decoration-none social-icon">
-                <i class="fab fa-whatsapp fa-2x"></i>
-            </a>
-        </div>
-    </div>
 </div>
 
-<style>
-    .email-input {
-        max-width: 300px;
-        border: solid rgb(14, 14, 14);
-        border-radius: 5px;
-        padding: 10px;
-        font-size: 1rem;
-        background-color: #f8f9fa;
-        color: #101010;
-    }
-    .email-input:focus {
-        border-color: rgb(14, 14, 14);
-        box-shadow: 0 0 3px rgb(14, 14, 14);
-        outline: none;
-    }
+</div>
 
-     /* Estilos para los iconos de redes sociales */
-     .social-icon {
-        transition: transform 0.3s ease;
-    }
-    .social-icon:hover {
-        transform: scale(1.1);
-    }
-    /* Asegura que los íconos se mantengan en línea sin saltos en móvil */
-    @media (max-width: 576px) {
-        .social-icon {
-            margin: 0 0.5rem;
-        }
-    }
-</style>
+</section>
 
-<!-- <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script>
-    $(document).ready(function() {
-        $('#subscription-form').on('submit', function(event) {
-            event.preventDefault();
-            
-            $.ajax({
-                type: 'POST',
-                url: $(this).attr('action') || window.location.href,
-                data: $(this).serialize(),
-                success: function(response) {
-                    if (response.success) {
-                        $('#response-message').html('<div class="alert alert-success">¡Gracias por suscribirte! 🎉</div>');
-                        $('#subscription-form')[0].reset();
-                    }
-                },
-                error: function() {
-                    $('#response-message').html('<div class="alert alert-danger">Hubo un error. Inténtalo de nuevo.</div>');
-                }
-            });
-        });
-    });
-</script> -->
 
+<!-- PRODUCTOS -->
+
+<section id="products" class="products-section">
+
+<div class="container">
+
+<div class="row g-4">
+
+{% for product in products %}
+
+<div class="col-lg-3 col-md-6">
+
+<div class="product-card">
+
+{% if product.image %}
+<img src="{{ product.image.url }}" class="product-image">
+{% endif %}
+
+<div class="product-body">
+
+<h6 class="product-title">
+{{ product.name }}
+</h6>
+
+<p class="product-price">
+${{ product.current_price|floatformat:"0"|intcomma }}
+</p>
+
+<a href="{% url 'shop:product_detail' slug=product.slug %}"
+class="btn btn-coffee-outline">
+
+Ver detalles
+</a>
+
+</div>
+
+</div>
+
+</div>
+
+{% endfor %}
+
+</div>
+
+</div>
+
+</section>
 
 {% endblock %}

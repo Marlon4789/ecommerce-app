@@ -1,11 +1,44 @@
 {% extends "layouts/base.html" %}
-{% block title %}¡Gracias por tu compra!{% endblock %}
+
+{% block title %}Pago confirmado{% endblock %}
+
 {% block content %}
-<div class="container my-5 py-5 text-start" style="height: 28rem;">
-  <h1 class="text-success">🎉 ¡Pago Confirmado! 🎉</h1>
-  <p class="mt-3">¡Gracias por confiar en <strong>Coffe Shop</strong>! 😊</p>
-  <p>Hemos recibido tu pago y estamos preparando tu pedido con mucho amor y dedicación. Pronto lo tendrás en tus manos para disfrutar de una experiencia única. ☕✨</p>
-  <p>Si necesitas ayuda o tienes alguna pregunta, no dudes en contactarnos.</p>
-  <a href="/" class="btn btn-success rounded-0 mt-3"><strong>Volver al Inicio</strong></a>
+
+<section class="payment-success">
+
+<div class="container">
+
+<div class="row justify-content-center">
+
+<div class="col-md-7 text-center">
+
+<div class="success-card">
+
+<i class="fa-solid fa-circle-check success-icon"></i>
+
+<h2>¡Pago confirmado!</h2>
+
+<p>
+
+Gracias por confiar en <strong>Kaboha Coffee</strong>.  
+Tu pedido está siendo preparado.
+
+</p>
+
+<a href="{% url 'shop:product_list' %}" class="btn btn-coffee">
+
+Volver a la tienda
+
+</a>
+
 </div>
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+
 {% endblock %}
