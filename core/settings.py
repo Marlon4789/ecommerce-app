@@ -30,10 +30,9 @@ SECRET_KEY = config("SECRET_KEY")
 
 # Debug solo para desarrollo
 DEBUG = config("DEBUG", default=False, cast=bool)
-# DEBUG = True
 
 # Hosts permitidos
-ALLOWED_HOSTS = ["*"]
+ALLOWED_HOSTS = config("ALLOWED_HOSTS", default="*").split(",")
 
 
 # =========================================================
@@ -69,9 +68,12 @@ MIDDLEWARE = [
 
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
+
     'django.middleware.csrf.CsrfViewMiddleware',
+
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
+
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
@@ -102,6 +104,7 @@ TEMPLATES = [
 
                 'django.template.context_processors.debug',
                 'django.template.context_processors.request',
+
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
 
@@ -232,12 +235,34 @@ stripe.api_key = STRIPE_SECRET_KEY
 # CELERY CONFIGURATION
 # =========================================================
 
-CELERY_BROKER_URL = config("CELERY_BROKER_URL")
+CELERY_BROKER_URL = config("REDIS_URL")
+CELERY_RESULT_BACKEND = config("REDIS_URL")
 
-CELERY_ACCEPT_CONTENT = ["json"]
-CELERY_TASK_SERIALIZER = "json"
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
 
-CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP = True
+
+# =========================================================
+# SECURITY / RAILWAY SETTINGS
+# =========================================================
+
+# necesario cuando usas proxy (Railway)
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
+# evita errores CSRF en producción
+CSRF_TRUSTED_ORIGINS = [
+    "https://*.railway.app"
+]
+
+
+# =========================================================
+# LOGGING
+# =========================================================
+
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+}
 
 
 # =========================================================
