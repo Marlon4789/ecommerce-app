@@ -1,5 +1,5 @@
 """
-DJANGO SETTINGS - COFFEE STORE
+DJANGO SETTINGS 
 Configurado para desarrollo y producción (Railway)
 """
 
