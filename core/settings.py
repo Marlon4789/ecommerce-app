@@ -32,8 +32,7 @@ SECRET_KEY = config("SECRET_KEY")
 DEBUG = config("DEBUG", default=False, cast=bool)
 
 # Hosts permitidos
-#ALLOWED_HOSTS = config("ALLOWED_HOSTS", default="*").split(",")
-ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '*').split(',')
+ALLOWED_HOSTS = config("ALLOWED_HOSTS", default="*").split(",")
 
 SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SECURE = True
@@ -127,7 +126,8 @@ TEMPLATES = [
 DATABASES = {
     "default": dj_database_url.config(
         default=config("DATABASE_URL", default="sqlite:///db.sqlite3"),
-        conn_max_age=600
+        conn_max_age=600,
+        ssl_require=not DEBUG
     )
 }
 
@@ -186,6 +186,8 @@ STATIC_ROOT = BASE_DIR / "staticfiles"
 # optimización de archivos estáticos
 STATICFILES_STORAGE = "whitenoise.storage.CompressedStaticFilesStorage"
 
+WHITENOISE_AUTOREFRESH = True
+WHITENOISE_USE_FINDERS = True
 
 # =========================================================
 # MEDIA FILES
