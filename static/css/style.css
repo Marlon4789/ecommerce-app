@@ -1,0 +1,597 @@
+/* ======================================
+BASE
+====================================== */
+
+html{
+scroll-padding-top:90px;
+scroll-behavior:smooth;
+}
+
+body{
+font-family:'Poppins',sans-serif;
+background:#ffffff;
+color:#222;
+}
+
+
+/* ======================================
+NAVBAR MOBILE FIX
+====================================== */
+
+
+.hero-coffee{
+padding:120px 0;
+}
+
+.hero-coffee{
+padding:80px 0;
+}
+
+@media (max-width:768px){
+
+.hero-coffee{
+padding:50px 20px;
+}
+
+}
+
+/* ======================================
+NAVBAR
+====================================== */
+
+.coffee-navbar{
+background:#0E0E0E;
+padding:15px 0;
+}
+
+.navbar-brand{
+font-size:1.4rem;
+}
+
+.cart-badge{
+position:absolute;
+top:-6px;
+right:-10px;
+background:#e84e16;
+color:white;
+font-size:.7rem;
+padding:3px 6px;
+border-radius:50%;
+}
+
+
+
+/* ======================================
+BOTONES
+====================================== */
+
+.btn-coffee{
+background:#e84e16;
+color:white;
+border:none;
+padding:12px 20px;
+font-weight:600;
+transition:0.3s;
+}
+
+.btn-coffee:hover{
+background:#dd4314;
+color:white;
+}
+
+.btn-coffee-outline{
+border:1px solid #e84e16;
+color:#e84e16;
+}
+
+.btn-coffee-outline:hover{
+background:#e84e16;
+color:white;
+}
+
+
+
+/* ======================================
+HERO PRINCIPAL (background)
+====================================== */
+
+.hero-section{
+background:url("https://cdn.pixabay.com/photo/2017/03/27/14/18/coffee-2179028_1280.jpg") center/cover;
+padding:120px 0;
+color:white;
+}
+
+.hero-title{
+font-size:3rem;
+font-weight:700;
+}
+
+.hero-subtitle{
+margin:20px 0;
+font-size:18px;
+}
+
+
+
+/* ======================================
+HERO COFFEE (sección moderna)
+====================================== */
+
+.hero-coffee{
+padding:120px 0;
+background:#f9f5f0;
+}
+
+.hero-title span{
+color:#795548;
+}
+
+.hero-image{
+max-width:100%;
+border-radius:10px;
+box-shadow:0 15px 40px rgba(0,0,0,.1);
+}
+
+
+
+/* ======================================
+HERO MOBILE
+====================================== */
+
+@media (max-width:768px){
+
+.hero-coffee{
+padding:70px 20px;
+}
+
+.hero-title{
+font-size:2rem;
+}
+
+.hero-subtitle{
+font-size:16px;
+}
+
+}
+
+
+
+/* ======================================
+PRODUCTOS
+====================================== */
+
+.products-section{
+padding:50px 0;
+}
+
+.product-card{
+background:rgb(243, 244, 245);
+border-radius:10px;
+overflow:hidden;
+transition:.3s;
+box-shadow:0 5px 15px rgba(0,0,0,.05);
+}
+
+.product-card:hover{
+transform:translateY(-5px);
+box-shadow:0 10px 25px rgba(0,0,0,.15);
+}
+
+.product-image{
+width:100%;
+height:220px;
+object-fit:cover;
+}
+
+.product-body{
+padding:20px;
+text-align:center;
+}
+
+.product-price{
+font-weight:600;
+color:#e84e16;
+}
+
+
+
+/* ======================================
+DETALLE PRODUCTO (SE MANTIENE INTACTO)
+====================================== */
+
+.product-detail{
+padding-top:40px;
+padding-bottom:80px;
+}
+
+@media (max-width:768px){
+
+.product-detail{
+padding-top:20px;
+padding-bottom:50px;
+}
+
+}
+
+.detail-image{
+max-width:400px;
+width:100%;
+border-radius:10px;
+}
+
+.detail-price{
+font-size:1.5rem;
+color:#e84e16;
+}
+
+.product-description{
+color:#555;
+margin-bottom:25px;
+}
+
+
+
+/* ======================================
+CART RESPONSIVE
+====================================== */
+
+.cart-table{
+background:white;
+border-radius:8px;
+overflow:hidden;
+}
+
+.cart-table td,
+.cart-table th{
+vertical-align:middle;
+}
+
+.cart-actions{
+border-top:1px solid #eee;
+padding-top:20px;
+}
+
+.cart-actions h4{
+font-weight:600;
+}
+
+/* MOBILE */
+
+@media (max-width:768px){
+
+.cart-table{
+font-size:14px;
+}
+
+.cart-actions{
+text-align:center;
+}
+
+.cart-actions h4{
+margin-top:15px;
+}
+
+}
+
+
+
+/* ======================================
+CHECKOUT
+====================================== */
+
+.checkout-section{
+padding:80px 0;
+}
+
+.checkout-card{
+background:white;
+padding:40px;
+border-radius:10px;
+box-shadow:0 10px 30px rgba(0,0,0,.08);
+}
+
+.checkout-title{
+margin-bottom:25px;
+font-weight:600;
+}
+
+.order-summary{
+display:flex;
+justify-content:space-between;
+margin-bottom:30px;
+font-size:18px;
+}
+
+.order-price{
+color:#e84e16;
+}
+
+
+
+/* ======================================
+PAYMENT
+====================================== */
+
+.payment-section{
+padding:100px 0;
+}
+
+.payment-card{
+background:white;
+padding:40px;
+border-radius:10px;
+text-align:center;
+box-shadow:0 10px 30px rgba(0,0,0,.08);
+}
+
+.payment-total{
+font-size:20px;
+margin:25px 0;
+}
+
+
+
+/* ======================================
+PAGO EXITOSO
+====================================== */
+
+.success-card{
+padding:60px;
+text-align:center;
+}
+
+.success-icon{
+font-size:70px;
+color:#28a745;
+margin-bottom:20px;
+}
+
+
+
+/* ======================================
+ERROR DE PAGO
+====================================== */
+
+.error-card{
+padding:40px;
+text-align:center;
+}
+
+.error-icon{
+font-size:60px;
+color:red;
+margin-bottom:20px;
+}
+
+.debug-box{
+background:#111;
+color:#fff;
+padding:15px;
+margin:20px 0;
+overflow:auto;
+}
+
+
+
+/* ======================================
+PAGO CANCELADO
+====================================== */
+
+.cancel-card{
+padding:50px;
+text-align:center;
+}
+
+.cancel-icon{
+font-size:60px;
+color:#e84e16;
+margin-bottom:20px;
+}
+
+
+
+/* ======================================
+FOOTER
+====================================== */
+
+.coffee-footer{
+background:#0E0E0E;
+color:white;
+padding:0 0 50px 0;
+}
+
+.social-icons a{
+color:white;
+margin-right:10px;
+font-size:1.2rem;
+}
+
+.social-icons a:hover{
+color:#FF9800;
+}
+
+/* ================================
+QUANTITY SELECTOR
+================================ */
+
+.quantity-selector{
+display:flex;
+align-items:center;
+gap:10px;
+}
+
+.qty-input{
+width:70px;
+text-align:center;
+border:1px solid #ddd;
+border-radius:6px;
+padding:6px;
+font-weight:600;
+}
+
+.qty-btn{
+width:35px;
+height:35px;
+border:none;
+background:#252525;
+color:white;
+font-size:18px;
+border-radius:6px;
+transition:0.2s;
+}
+
+.qty-btn:hover{
+background:#4e3728;
+}
+
+/* ================================
+BADGES PRODUCTO
+================================ */
+
+.bg-coffee{
+background:#333332;
+}
+
+.product-badges .badge{
+font-size:13px;
+padding:8px 10px;
+margin-right:6px;
+}
+
+
+/* ================================
+STOCK
+================================ */
+
+.stock-good{
+color:#198754;
+font-weight:600;
+}
+
+.stock-low{
+color:#d97706;
+font-weight:600;
+}
+
+.stock-out{
+color:#dc3545;
+font-weight:600;
+}
+
+
+/* ================================
+SELECTOR CANTIDAD
+================================ */
+
+.quantity-selector{
+display:flex;
+align-items:center;
+gap:10px;
+}
+
+.qty-input{
+width:70px;
+text-align:center;
+border:1px solid #ddd;
+border-radius:6px;
+padding:6px;
+font-weight:600;
+}
+
+.qty-btn{
+width:35px;
+height:35px;
+border:none;
+background:#6b4f3b;
+color:white;
+font-size:18px;
+border-radius:6px;
+transition:0.2s;
+}
+
+.qty-btn:hover{
+background:#4e3728;
+}
+
+
+/* ================================
+BOTON CARRITO
+================================ */
+
+.add-cart-btn{
+font-size:18px;
+padding:12px;
+border-radius:8px;
+}
+
+.add-cart-btn i{
+margin-right:8px;
+}
+
+/* ======================================
+WHOLESALE / DISTRIBUCION NEGOCIOS
+====================================== */
+
+.wholesale-section{
+padding:50px 0;
+background:#f6f2ed;
+}
+
+.wholesale-title{
+font-weight:700;
+font-size:2.2rem;
+margin-bottom:20px;
+}
+
+.wholesale-subtitle{
+color:#555;
+line-height:1.6;
+}
+
+.wholesale-card{
+background:white;
+padding:20px 15px;
+border-radius:12px;
+text-align:center;
+box-shadow:0 8px 20px rgba(0,0,0,.05);
+transition:.3s;
+height:100%;
+}
+
+.wholesale-card:hover{
+transform:translateY(-6px);
+box-shadow:0 12px 28px rgba(0,0,0,.12);
+}
+
+.wholesale-icon{
+font-size:32px;
+color:#e84e16;
+margin-bottom:15px;
+}
+
+.contact-buttons{
+display:flex;
+justify-content:center;
+gap:15px;
+flex-wrap:wrap;
+}
+
+
+
+/* MOBILE */
+
+@media (max-width:768px){
+
+.wholesale-title{
+font-size:1.8rem;
+}
+
+.wholesale-subtitle{
+font-size:15px;
+}
+
+.wholesale-card{
+padding:30px 20px;
+}
+
+}
