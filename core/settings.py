@@ -34,6 +34,8 @@ DEBUG = config("DEBUG", default=False, cast=bool)
 # Hosts permitidos
 ALLOWED_HOSTS = config("ALLOWED_HOSTS", default="*").split(",")
 
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
 
 # =========================================================
 # INSTALLED APPLICATIONS
