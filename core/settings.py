@@ -33,6 +33,9 @@ DEBUG = config("DEBUG", default=False, cast=bool)
 
 # Hosts permitidos
 ALLOWED_HOSTS = config("ALLOWED_HOSTS", default="*").split(",")
+CSRF_TRUSTED_ORIGINS = [
+    "https://ecommerce-app-production-4a70.up.railway.app"
+]
 
 SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SECURE = True
