@@ -32,7 +32,8 @@ SECRET_KEY = config("SECRET_KEY")
 DEBUG = config("DEBUG", default=False, cast=bool)
 
 # Hosts permitidos
-ALLOWED_HOSTS = config("ALLOWED_HOSTS", default="*").split(",")
+#ALLOWED_HOSTS = config("ALLOWED_HOSTS", default="*").split(",")
+ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '*').split(',')
 
 SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SECURE = True
