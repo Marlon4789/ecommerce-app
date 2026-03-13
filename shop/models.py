@@ -26,10 +26,11 @@ class Product(models.Model):
     promotional_price = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     on_sale = models.BooleanField(default=False)
 
+    @property
     def current_price(self):
         if self.on_sale and self.promotional_price:
-            return str(self.promotional_price)
-        return str(self.price)
+            return self.promotional_price
+        return self.price
     
 
     
