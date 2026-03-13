@@ -273,6 +273,12 @@ LOGGING = {
 }
 
 
+# ===== CREATE SUPERUSER AUTOMATICAMENTE EN RAILWAY =====
+try:
+    import core.create_superuser
+except Exception as e:
+    print(e)
+
 # =========================================================
 # DEFAULT PRIMARY KEY
 # =========================================================
