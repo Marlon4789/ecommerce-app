@@ -43,7 +43,7 @@ class Product(models.Model):
 
     availability = models.BooleanField(default=True)
     stock = models.IntegerField()
-    image = models.ImageField(upload_to='products/')
+    image = models.URLField(blank=True, null=True)
     created_date = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
   

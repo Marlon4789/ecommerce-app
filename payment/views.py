@@ -30,7 +30,8 @@ def payment_process(request):
                 # Para debugging
                 print(f"Procesando item: {item.product.name}")
                 print(f"Precio original: {item.price}")
-                price_in_cents = int(float(item.price) * 100)
+                # price_in_cents = int(float(item.price) * 100)
+                price_in_cents = int(Decimal(item.price) * 100)
                 print(f"Precio en centavos: {price_in_cents}")
                 
                 session_data['line_items'].append({
