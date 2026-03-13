@@ -74,7 +74,7 @@ alt="Café">
 <div class="product-card">
 
 {% if product.image %}
-<img src="{{ product.image.url }}" class="product-image">
+<img src="{{ product.image }}" class="product-image" alt="{{ product.name }}">
 {% endif %}
 
 <div class="product-body">
