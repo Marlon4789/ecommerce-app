@@ -17,7 +17,7 @@ class Cart:
         if product_id not in self.cart:
             self.cart[product_id] = {
                 'quantity': 0,
-                'price': str(product.current_price()),
+                'price': str(product.current_price),  # Usamos el precio actual del producto
                 'name': product.name  # Guardamos el nombre del producto
             }
         if override:
