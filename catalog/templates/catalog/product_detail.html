@@ -1,0 +1,276 @@
+{% extends 'layouts/base_tailwind.html' %}
+
+{% block title %}{{ product.name }} - Kaboha Coffee{% endblock %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+    <!-- Breadcrumb -->
+    <nav class="mb-4 text-xs">
+        <ol class="flex space-x-2 text-gray-600">
+            <li><a href="{% url 'shop:product_list' %}" class="text-gray-600 hover:text-primary transition">Inicio</a></li>
+            <li class="text-gray-400">/</li>
+            <li><a href="{% url 'catalog:product-list' %}" class="text-gray-600 hover:text-primary transition">Catálogo</a></li>
+            <li class="text-gray-400">/</li>
+            <li class="text-gray-900 font-medium">{{ product.name }}</li>
+        </ol>
+    </nav>
+    
+    <!-- Product Detail -->
+    <div 
+        x-data="productDetail()" 
+        class="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8 mb-10"
+    >
+        <!-- LEFT: Gallery -->
+        <div>
+            <!-- Main Image -->
+            <div class="bg-white rounded-lg shadow-sm overflow-hidden mb-2 border border-gray-200">
+                <div class="aspect-square bg-gray-100 flex items-center justify-center relative max-h-80">
+                    <img 
+                        :src="currentImage.image" 
+                        :alt="currentImage.alt_text"
+                        class="w-full h-full object-contain p-3"
+                    >
+                    
+                    <!-- Zoom -->
+                    <button 
+                        @click="openModal()"
+                        class="absolute top-3 right-3 bg-primary text-white p-1.5 rounded-full shadow-md hover:shadow-lg hover:bg-primary-dark transition transform hover:scale-110"
+                        title="Ampliar"
+                    >
+                        <i class="fas fa-search-plus text-xs"></i>
+                    </button>
+                    
+                    <!-- Nav -->
+                    <template x-if="images.length > 1">
+                        <div class="absolute inset-0 flex items-center justify-between px-3 opacity-0 hover:opacity-100 transition">
+                            <button @click="previousImage()" class="bg-primary text-white rounded-full p-1 hover:bg-primary-dark transition">
+                                <i class="fas fa-chevron-left text-xs"></i>
+                            </button>
+                            <button @click="nextImage()" class="bg-primary text-white rounded-full p-1 hover:bg-primary-dark transition">
+                                <i class="fas fa-chevron-right text-xs"></i>
+                            </button>
+                        </div>
+                    </template>
+                </div>
+            </div>
+            
+            <!-- Thumbnails -->
+            <template x-if="images.length > 1">
+                <div class="grid grid-cols-4 gap-1">
+                    <template x-for="(image, index) in images" :key="index">
+                        <button 
+                            @click="setCurrentImage(index)"
+                            :class="currentImageIndex === index ? 'ring-2 ring-primary border border-primary' : 'ring-1 ring-gray-300'"
+                            class="rounded-lg overflow-hidden bg-gray-100 aspect-square hover:ring-2 hover:ring-primary transition"
+                        >
+                            <img :src="image.image" :alt="image.alt_text" class="w-full h-full object-contain">
+                        </button>
+                    </template>
+                </div>
+                <p class="text-xs text-gray-500 mt-1 text-center">
+                    <span x-text="currentImageIndex + 1"></span> / <span x-text="images.length"></span>
+                </p>
+            </template>
+        </div>
+        
+        <!-- RIGHT: Info -->
+        <div>
+            <!-- Category -->
+            <div class="flex items-center justify-between mb-2">
+                <span class="text-xs font-bold text-primary bg-primary/10 px-2 py-0.5 rounded-full">{{ product.category.name }}</span>
+                <div class="flex text-primary space-x-0.5">
+                    {% for i in "12345" %}<i class="fas fa-star text-xs"></i>{% endfor %}
+                    <span class="text-xs text-gray-600 ml-1">(342)</span>
+                </div>
+            </div>
+            
+            <!-- Title -->
+            <h1 class="text-xl sm:text-2xl font-bold text-gray-900 mb-2">{{ product.name }}</h1>
+            
+            <!-- Price -->
+            <div class="bg-gray-50 p-2.5 rounded-lg mb-3">
+                {% if product.on_sale %}
+                    <div class="flex items-baseline space-x-2 mb-1">
+                        <span class="text-2xl font-bold text-green-600">${{ product.promotional_price }}</span>
+                        <span class="text-sm text-gray-400 line-through">${{ product.price }}</span>
+                        <span class="text-xs font-bold text-red-600 bg-red-100 px-1 py-0.5 rounded-full">-{{ product.discount_percentage|default:"0" }}%</span>
+                    </div>
+                    <p class="text-xs text-green-600 font-semibold">Oferta especial</p>
+                {% else %}
+                    <span class="text-2xl font-bold text-gray-900">${{ product.price }}</span>
+                {% endif %}
+            </div>
+            
+            <!-- Stock -->
+            <div class="mb-3 p-2 rounded-lg text-xs {% if product.stock > 0 %}bg-green-50 border border-green-200{% else %}bg-red-50 border border-red-200{% endif %}">
+                {% if product.stock > 0 %}
+                    <p class="text-green-800"><i class="fas fa-check-circle mr-1"></i><strong>{{ product.stock }}</strong> disponibles</p>
+                    <p class="text-xs text-green-700">Envío gratis</p>
+                {% else %}
+                    <p class="text-red-800"><i class="fas fa-times-circle mr-1"></i><strong>Agotado</strong></p>
+                {% endif %}
+            </div>
+            
+            <!-- Specs -->
+            <div class="grid grid-cols-2 gap-3 mb-3 pb-3 border-b border-gray-200">
+                <div>
+                    <p class="text-xs text-gray-600">Molienda</p>
+                    <p class="font-semibold text-gray-900 capitalize text-xs">{{ product.grinding_type }}</p>
+                </div>
+                <div>
+                    <p class="text-xs text-gray-600">Peso</p>
+                    <p class="font-semibold text-gray-900 text-xs">{{ product.weight }}g</p>
+                </div>
+            </div>
+            
+            <!-- Description -->
+            <div class="mb-3 line-clamp-2">
+                <p class="text-gray-700 text-xs leading-relaxed">{{ product.description|linebreaks }}</p>
+            </div>
+            
+            <!-- Cart Section -->
+            <div class="flex items-center space-x-2 mb-3">
+                <div class="flex items-center border border-gray-300 rounded">
+                    <button @click="quantity > 1 && quantity--" class="px-2 py-1 text-gray-600 hover:text-gray-900 text-xs">
+                        <i class="fas fa-minus text-xs"></i>
+                    </button>
+                    <input type="number" x-model.number="quantity" min="1" :max="maxQuantity" class="w-12 text-center text-xs focus:outline-none">
+                    <button @click="quantity < maxQuantity && quantity++" class="px-2 py-1 text-gray-600 hover:text-gray-900 text-xs">
+                        <i class="fas fa-plus text-xs"></i>
+                    </button>
+                </div>
+                
+                <form method="post" action="{% url 'cart:add' product.id %}" class="flex-1">
+                    {% csrf_token %}
+                    <input type="hidden" name="quantity" x-bind:value="quantity">
+                    <button type="submit" {% if not product.stock > 0 %}disabled{% endif %} class="w-full py-1.5 bg-primary hover:bg-primary-dark disabled:bg-gray-400 text-white font-semibold rounded transition text-xs">
+                        <i class="fas fa-shopping-cart mr-1"></i>{% if product.stock > 0 %}Carrito{% else %}Agotado{% endif %}
+                    </button>
+                </form>
+            </div>
+            
+            <!-- Info Grid -->
+            <div class="grid grid-cols-2 gap-1 text-xs">
+                <div class="bg-gray-50 p-2 rounded border border-gray-200"><i class="fas fa-truck text-primary mr-1"></i>Envío</div>
+                <div class="bg-gray-50 p-2 rounded border border-gray-200"><i class="fas fa-shield-alt text-primary mr-1"></i>Seguro</div>
+                <div class="bg-gray-50 p-2 rounded border border-gray-200"><i class="fas fa-undo text-primary mr-1"></i>Devolución</div>
+                <div class="bg-gray-50 p-2 rounded border border-gray-200"><i class="fas fa-headset text-primary mr-1"></i>Soporte</div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- MODAL -->
+    <template x-if="showModal">
+        <div @click="closeModal()" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4">
+            <div @click.stop class="relative max-w-4xl w-full">
+                <img :src="currentImage.image" :alt="currentImage.alt_text" class="w-full">
+                <button @click="closeModal()" class="absolute top-4 right-4 bg-white rounded-full p-1.5 hover:bg-gray-100 transition">
+                    <i class="fas fa-times text-lg"></i>
+                </button>
+            </div>
+        </div>
+    </template>
+    
+    <!-- Recommended -->
+    <div class="mt-8 pt-6 border-t border-gray-200">
+        <h2 class="text-lg font-bold text-gray-900 mb-4">Más productos</h2>
+        <div id="recommended-container" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2">
+            <div class="col-span-full text-center py-6 text-gray-500 text-xs">
+                <i class="fas fa-spinner fa-spin block mb-1"></i>Cargando...
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    [x-cloak] { display: none; }
+</style>
+
+<script>
+window.productImages = {{ images_json|safe }};
+
+function productDetail() {
+    return {
+        images: window.productImages || [],
+        currentImageIndex: 0,
+        quantity: 1,
+        maxQuantity: {{ product.stock|default:"0" }},
+        showModal: false,
+        
+        get currentImage() {
+            if (this.images && this.images.length > 0) {
+                return this.images[this.currentImageIndex] || this.images[0];
+            }
+            return { image: 'https://images.unsplash.com/photo-1447933601403-0c6688de566e?w=600&h=600&fit=crop', alt_text: '{{ product.name }}' };
+        },
+        
+        init() {
+            console.log('Imágenes:', this.images.length);
+            this.loadRecommendedProducts();
+        },
+        
+        nextImage() {
+            if (this.images && this.images.length > 1) {
+                this.currentImageIndex = (this.currentImageIndex + 1) % this.images.length;
+            }
+        },
+        
+        previousImage() {
+            if (this.images && this.images.length > 1) {
+                this.currentImageIndex = (this.currentImageIndex - 1 + this.images.length) % this.images.length;
+            }
+        },
+        
+        setCurrentImage(index) {
+            this.currentImageIndex = index;
+        },
+        
+        openModal() {
+            this.showModal = true;
+            document.body.style.overflow = 'hidden';
+        },
+        
+        closeModal() {
+            this.showModal = false;
+            document.body.style.overflow = 'auto';
+        },
+        
+        loadRecommendedProducts() {
+            const container = document.getElementById('recommended-container');
+            const currentProductId = {{ product.id }};
+            
+            fetch(`/api/products/recommended/?exclude=${currentProductId}&limit=4`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.results && data.results.length > 0) {
+                        container.innerHTML = data.results.map(product => `
+                            <div class="group bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition flex flex-col">
+                                <div class="relative overflow-hidden bg-gray-100 h-32">
+                                    <img src="${product.image || 'https://images.unsplash.com/photo-1447933601403-0c6688de566e?w=200&h=200&fit=crop'}" alt="${product.name}" class="w-full h-full object-cover group-hover:scale-110 transition duration-500">
+                                    <div class="absolute top-1 right-1 bg-primary text-white text-xs px-1.5 py-0.5 rounded-full font-bold">
+                                        <i class="fas fa-tag mr-0.5"></i>
+                                    </div>
+                                </div>
+                                <div class="flex-1 p-2 flex flex-col">
+                                    <h3 class="font-bold text-xs text-gray-900 mb-1 line-clamp-2">
+                                        <a href="/products/${product.slug}/" class="hover:text-primary transition">${product.name}</a>
+                                    </h3>
+                                    <p class="text-xs text-gray-700 flex-1 mb-2"><strong>$${product.price}</strong></p>
+                                    <a href="/products/${product.slug}/" class="btn-primary text-xs py-1 text-center">
+                                        <i class="fas fa-eye mr-0.5"></i>Ver
+                                    </a>
+                                </div>
+                            </div>
+                        `).join('');
+                    }
+                })
+                .catch(error => {
+                    console.log('Error:', error);
+                    container.innerHTML = '<p class="col-span-full text-center text-gray-500 py-6 text-xs">No hay productos</p>';
+                });
+        }
+    }
+}
+</script>
+
+{% endblock %}

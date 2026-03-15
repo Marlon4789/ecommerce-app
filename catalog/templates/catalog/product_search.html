@@ -1,0 +1,320 @@
+{% extends 'layouts/base_tailwind.html' %}
+
+{% block title %}Catálogo de Productos - Kaboha Coffee{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <!-- Breadcrumb -->
+    <nav class="mb-8 text-sm">
+        <ol class="flex space-x-2 text-gray-600">
+            <li><a href="{% url 'shop:product_list' %}" class="text-coffee hover:text-coffee-dark transition">Inicio</a></li>
+            <li class="text-gray-400">/</li>
+            <li class="text-coffee font-medium">Catálogo</li>
+        </ol>
+    </nav>
+    
+    <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
+        <!-- SIDEBAR FILTERS -->
+        <div class="lg:col-span-1">
+            <div 
+                x-data="searchFilters()" 
+                class="bg-white p-6 rounded-xl shadow-sm sticky top-24 border-l-4 border-coffee"
+            >
+                <h2 class="text-lg font-bold mb-6 text-coffee flex items-center">
+                    <i class="fas fa-filter mr-2"></i> Filtros
+                </h2>
+                
+                <!-- Buscar -->
+                <div class="mb-6">
+                    <label class="block text-sm font-semibold mb-2 text-coffee">Buscar Producto</label>
+                    <div class="relative">
+                        <input 
+                            type="text" 
+                            x-model="filters.q"
+                            @input.debounce="fetchProducts()"
+                            placeholder="Café, espresso..."
+                            class="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-coffee transition"
+                        >
+                        <i class="fas fa-search absolute right-3 top-3 text-coffee opacity-50"></i>
+                    </div>
+                </div>
+                
+                <!-- Categoría -->
+                <div class="mb-6">
+                    <label class="block text-sm font-semibold mb-3 text-coffee">
+                        <i class="fas fa-tag mr-2"></i> Categoría
+                    </label>
+                    <div class="space-y-2" id="categories-list">
+                        <div class="text-gray-500 text-sm">Cargando...</div>
+                    </div>
+                </div>
+                
+                <!-- Rango de Precio -->
+                <div class="mb-6">
+                    <label class="block text-sm font-semibold mb-3 text-coffee">
+                        <i class="fas fa-dollar-sign mr-2"></i> Rango de Precio
+                    </label>
+                    <div class="space-y-2">
+                        <input 
+                            type="number" 
+                            x-model.number="filters.min_price"
+                            @change="fetchProducts()"
+                            placeholder="Mínimo"
+                            class="w-full px-3 py-2 border-2 border-gray-300 rounded-lg text-sm focus:outline-none focus:border-coffee transition"
+                        >
+                        <input 
+                            type="number" 
+                            x-model.number="filters.max_price"
+                            @change="fetchProducts()"
+                            placeholder="Máximo"
+                            class="w-full px-3 py-2 border-2 border-gray-300 rounded-lg text-sm focus:outline-none focus:border-coffee transition"
+                        >
+                    </div>
+                </div>
+                
+                <!-- Solo Ofertas -->
+                <div class="mb-6 p-3 bg-red-50 rounded-lg">
+                    <label class="flex items-center space-x-3 cursor-pointer">
+                        <input 
+                            type="checkbox" 
+                            x-model="filters.on_sale"
+                            @change="fetchProducts()"
+                            class="w-4 h-4 accent-red-600 rounded"
+                        >
+                        <span class="text-sm font-semibold text-red-600">
+                            <i class="fas fa-bolt mr-1"></i> Solo Ofertas
+                        </span>
+                    </label>
+                </div>
+                
+                <!-- Limpiar Filtros -->
+                <button 
+                    @click="clearFilters()"
+                    class="w-full py-3 px-4 bg-coffee-cream text-coffee rounded-lg hover:bg-gray-200 transition text-sm font-semibold border-2 border-coffee"
+                >
+                    <i class="fas fa-redo mr-2"></i> Limpiar Filtros
+                </button>
+            </div>
+        </div>
+        
+        <!-- PRODUCTS GRID -->
+        <div class="lg:col-span-3">
+            <!-- Header with Sort -->
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
+                <div>
+                    <h1 class="text-4xl font-bold text-coffee mb-2">Nuestro Catálogo</h1>
+                    <p class="text-gray-600">Café premium cuidadosamente seleccionado</p>
+                </div>
+                
+                <select 
+                    @change="filters.sort = $el.value; fetchProducts()"
+                    class="px-4 py-2 border-2 border-coffee rounded-lg focus:outline-none focus:ring-2 focus:ring-coffee-cream bg-white font-semibold text-coffee"
+                >
+                    <option value="name">Nombre (A-Z)</option>
+                    <option value="price">Precio (Menor)</option>
+                    <option value="-price">Precio (Mayor)</option>
+                    <option value="-created_date">Más Nuevos</option>
+                </select>
+            </div>
+            
+            <!-- Products Grid -->
+            <div id="products-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 min-h-96">
+                <div class="col-span-full text-center py-12 text-gray-500">
+                    <i class="fas fa-spinner fa-spin text-3xl mb-3 text-coffee"></i>
+                    <p class="text-gray-600 font-semibold">Cargando productos...</p>
+                </div>
+            </div>
+            
+            <!-- Pagination -->
+            <div id="pagination-container" class="mt-12 flex justify-center items-center space-x-2"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+function searchFilters() {
+    return {
+        filters: {
+            q: '',
+            category: null,
+            min_price: null,
+            max_price: null,
+            on_sale: false,
+            sort: 'name',
+        },
+        currentPage: 1,
+        categories: [],
+        
+        init() {
+            this.loadCategories();
+            this.fetchProducts();
+        },
+        
+        async loadCategories() {
+            try {
+                const response = await fetch('/api/products/categories/');
+                const data = await response.json();
+                this.categories = data;
+                this.renderCategories();
+            } catch (error) {
+                console.error('Error loading categories:', error);
+            }
+        },
+        
+        renderCategories() {
+            const container = document.getElementById('categories-list');
+            container.innerHTML = this.categories.map(cat => `
+                <label class="flex items-center space-x-3 cursor-pointer p-2 hover:bg-coffee-cream rounded transition">
+                    <input 
+                        type="radio" 
+                        name="category"
+                        value="${cat.id}"
+                        onchange="searchFilters().handleCategoryChange(${cat.id})"
+                        class="w-4 h-4 accent-coffee rounded-full"
+                    >
+                    <span class="text-sm text-gray-700 font-medium">${cat.name}</span>
+                </label>
+            `).join('');
+        },
+        
+        handleCategoryChange(categoryId) {
+            this.filters.category = categoryId || null;
+            this.currentPage = 1;
+            this.fetchProducts();
+        },
+        
+        async fetchProducts() {
+            const params = new URLSearchParams();
+            if (this.filters.q) params.append('q', this.filters.q);
+            if (this.filters.category) params.append('category', this.filters.category);
+            if (this.filters.min_price) params.append('min_price', this.filters.min_price);
+            if (this.filters.max_price) params.append('max_price', this.filters.max_price);
+            if (this.filters.on_sale) params.append('on_sale', 'true');
+            if (this.filters.sort) params.append('ordering', this.filters.sort);
+            params.append('page', this.currentPage);
+            
+            try {
+                const response = await fetch(`/api/products/?${params}`);
+                const data = await response.json();
+                this.renderProducts(data);
+            } catch (error) {
+                console.error('Error fetching products:', error);
+            }
+        },
+        
+        renderProducts(data) {
+            const container = document.getElementById('products-container');
+            const products = data.results || [];
+            
+            if (products.length === 0) {
+                container.innerHTML = `
+                    <div class="col-span-full text-center py-16">
+                        <i class="fas fa-search text-5xl text-gray-300 mb-4"></i>
+                        <p class="text-gray-500 text-lg font-semibold">No se encontraron productos</p>
+                        <p class="text-gray-400 text-sm mt-2">Intenta ajustar los filtros</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            container.innerHTML = products.map(product => `
+                <div class="group bg-white rounded-xl shadow-md hover:shadow-xl overflow-hidden transition duration-300">
+                    <!-- Image -->
+                    <div class="relative overflow-hidden h-56 bg-gradient-to-br from-coffee-cream to-gray-100">
+                        ${product.images && product.images.length > 0 
+                            ? `<img src="${product.images[0].image}" alt="${product.images[0].alt_text}" class="w-full h-full object-cover group-hover:scale-110 transition duration-500">`
+                            : `<img src="https://images.unsplash.com/photo-1447933601403-0c6688de566e?w=400&h=400&fit=crop" alt="${product.name}" class="w-full h-full object-cover group-hover:scale-110 transition duration-500" style="filter: brightness(0.95)">`
+                        }
+                        ${product.on_sale ? `<div class="absolute top-4 right-4 bg-red-500 text-white px-4 py-2 rounded-full text-sm font-bold">-${Math.round((product.price - product.promotional_price) / product.price * 100)}%</div>` : ''}
+                    </div>
+                    
+                    <!-- Content -->
+                    <div class="p-5">
+                        <div class="mb-2">
+                            <span class="inline-block bg-coffee-cream text-coffee text-xs font-bold px-3 py-1 rounded-full">${product.category_name || 'Café'}</span>
+                        </div>
+                        <h3 class="font-bold text-coffee text-lg mb-3 line-clamp-2 group-hover:text-coffee-gold transition">${product.name}</h3>
+                        
+                        <!-- Price -->
+                        <div class="mb-4">
+                            ${product.on_sale 
+                                ? `
+                                    <div class="flex items-center space-x-2">
+                                        <span class="text-2xl font-bold text-coffee-gold">$${parseInt(product.promotional_price).toLocaleString()}</span>
+                                        <span class="text-sm text-gray-400 line-through">$${parseInt(product.price).toLocaleString()}</span>
+                                    </div>
+                                `
+                                : `<span class="text-2xl font-bold text-coffee">$${parseInt(product.price).toLocaleString()}</span>`
+                            }
+                        </div>
+                        
+                        <!-- Stock -->
+                        <p class="text-xs text-gray-600 mb-4 font-semibold">
+                            ${product.stock > 0 
+                                ? `<span class="text-green-600"><i class="fas fa-check-circle mr-1"></i>${product.stock} en stock</span>`
+                                : `<span class="text-red-600"><i class="fas fa-times-circle mr-1"></i> Agotado</span>`
+                            }
+                        </p>
+                        
+                        <!-- CTA -->
+                        <a href="/product/${product.slug}/" class="block w-full text-center bg-coffee text-white hover:bg-coffee-dark font-bold py-3 rounded-lg transition transform hover:scale-105">
+                            <i class="fas fa-eye mr-2"></i> Ver Detalles
+                        </a>
+                    </div>
+                </div>
+            `).join('');
+            
+            this.renderPagination(data);
+        },
+        
+        renderPagination(data) {
+            const container = document.getElementById('pagination-container');
+            const totalPages = Math.ceil(data.count / 12);
+            
+            if (totalPages <= 1) {
+                container.innerHTML = '';
+                return;
+            }
+            
+            let html = '';
+            for (let i = 1; i <= totalPages; i++) {
+                html += `
+                    <button 
+                        onclick="searchFilters().goToPage(${i})"
+                        class="px-4 py-2 rounded-lg font-semibold transition ${i === this.currentPage ? 'bg-coffee text-white shadow-md' : 'bg-white text-coffee border-2 border-coffee hover:bg-coffee-cream'}"
+                    >
+                        ${i}
+                    </button>
+                `;
+            }
+            
+            container.innerHTML = html;
+        },
+        
+        goToPage(page) {
+            this.currentPage = page;
+            this.fetchProducts();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        },
+        
+        clearFilters() {
+            this.filters = {
+                q: '',
+                category: null,
+                min_price: null,
+                max_price: null,
+                on_sale: false,
+                sort: 'name',
+            };
+            this.currentPage = 1;
+            document.querySelectorAll('input[name="category"]').forEach(el => el.checked = false);
+            this.fetchProducts();
+        }
+    };
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    // Alpine will handle initialization via x-data
+});
+</script>
+{% endblock %}

@@ -1,0 +1,263 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Kaboha Coffee - Café Premium{% endblock %}</title>
+    
+    <!-- Tailwind CSS con configuración personalizada -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'coffee': '#6f4e37',
+                        'coffee-dark': '#5a3f2e',
+                        'coffee-light': '#8b6f47',
+                        'coffee-gold': '#d4a574',
+                        'coffee-cream': '#fafafa',
+                        'primary': '#ff6b35',
+                        'primary-dark': '#e55a24',
+                        'primary-light': '#ff8555',
+                        'dark-nav': '#1a1a1a',
+                    },
+                    fontFamily: {
+                        'poppins': ['Poppins', 'sans-serif'],
+                    },
+                    fontSize: {
+                        'xs': '0.75rem',
+                        'sm': '0.875rem',
+                        'base': '1rem',
+                        'lg': '1.125rem',
+                        'xl': '1.25rem',
+                        '2xl': '1.5rem',
+                        '3xl': '1.875rem',
+                        '4xl': '2.25rem',
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    
+    <!-- Alpine.js para componentes interactivos -->
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    
+    <!-- Swiper para carruseles -->
+    <link rel="stylesheet" href="https://unpkg.com/swiper@11/swiper-bundle.min.css"/>
+    <script src="https://unpkg.com/swiper@11/swiper-bundle.min.js"></script>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Custom Styles -->
+    <style>
+        * {
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        html {
+            scroll-behavior: smooth;
+        }
+        
+        body {
+            background-color: #fafafa;
+            color: #2d2d2d;
+            font-weight: 400;
+            letter-spacing: 0.3px;
+        }
+        
+        h1, h2, h3, h4, h5, h6 {
+            letter-spacing: -0.5px;
+            line-height: 1.2;
+        }
+        
+        .btn-primary {
+            @apply bg-primary hover:bg-primary-dark text-white font-semibold py-2.5 px-6 rounded-lg transition transform hover:scale-105 active:scale-95;
+        }
+        
+        .btn-secondary {
+            @apply border-2 border-primary text-primary hover:bg-primary hover:text-white font-semibold py-2 px-6 rounded-lg transition;
+        }
+        
+        .form-input {
+            @apply w-full px-4 py-2.5 border-2 border-gray-300 rounded-lg focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary transition text-sm;
+        }
+        
+        .form-input.error {
+            @apply border-red-500 focus:border-red-500 focus:ring-red-500;
+        }
+        
+        .form-label {
+            @apply block text-sm font-semibold text-gray-700 mb-2;
+        }
+        
+        .form-error {
+            @apply text-red-600 text-xs mt-1 flex items-center;
+        }
+        
+        /* Animaciones suaves */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .animate-fade-in-up {
+            animation: fadeInUp 0.6s ease-out;
+        }
+        
+        /* Links con efecto */
+        a {
+            transition: all 0.3s ease;
+        }
+        
+        /* Productos cartas */
+        .product-card {
+            transition: all 0.3s ease;
+        }
+        
+        .product-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 25px rgba(0, 0, 0, 0.2);
+        }
+    </style>
+    
+    {% block extra_css %}{% endblock %}
+</head>
+<body class="bg-coffee-cream">
+    <!-- NAVBAR Dark Elegante -->
+    <nav class="sticky top-0 z-50 bg-dark-nav text-white shadow-lg">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16 md:h-20">
+                <!-- Logo -->
+                <a href="{% url 'shop:product_list' %}" class="flex items-center space-x-2 group">
+                    <i class="fas fa-mug-hot text-primary text-2xl md:text-3xl group-hover:text-primary-light transition"></i>
+                    <span class="text-white font-bold text-lg md:text-xl hidden sm:inline tracking-tight">Kaboha</span>
+                </a>
+                
+                <!-- Desktop Menu -->
+                <div class="hidden md:flex items-center space-x-3 lg:space-x-6">
+                    <a href="{% url 'shop:product_list' %}" class="text-gray-300 hover:text-primary text-sm font-medium transition">
+                        Inicio
+                    </a>
+                    <a href="{% url 'catalog:product-list' %}" class="text-gray-300 hover:text-primary text-sm font-medium transition">
+                        Productos
+                    </a>
+                    <a href="#" class="text-gray-300 hover:text-primary text-sm font-medium transition">
+                        Sobre Nosotros
+                    </a>
+                </div>
+                
+                <!-- Cart Icon y Mobile Menu -->
+                <div class="flex items-center space-x-4 md:space-x-6">
+                    <a href="{% url 'cart:cart_detail' %}" class="relative hover:scale-110 transition">
+                        <i class="fas fa-shopping-cart text-primary text-xl"></i>
+                        {% with total_items=cart|length %}
+                            {% if total_items > 0 %}
+                                <span class="absolute -top-2 -right-2 bg-primary text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
+                                    {{ total_items }}
+                                </span>
+                            {% endif %}
+                        {% endwith %}
+                    </a>
+                    
+                    <!-- Hamburger menu para mobile -->
+                    <button class="md:hidden text-primary text-xl" @click="mobileMenuOpen = !mobileMenuOpen" x-data="{ mobileMenuOpen: false }">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+    
+    <!-- MAIN CONTENT -->
+    <main class="min-h-screen">
+        {% block content %}{% endblock %}
+    </main>
+    
+    <!-- FOOTER Profesional -->
+    <footer class="bg-coffee text-white mt-20">
+        <!-- Main Footer -->
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+                <!-- Sobre Nosotros -->
+                <div>
+                    <div class="flex items-center space-x-2 mb-4">
+                        <i class="fas fa-mug-hot text-coffee-gold text-2xl"></i>
+                        <h3 class="text-xl font-bold">Kaboha Coffee</h3>
+                    </div>
+                    <p class="text-gray-300 leading-relaxed text-sm">
+                        Café premium de origen. Cultivado con pasión por caficultores y llevado directamente a tu taza.
+                    </p>
+                </div>
+                
+                <!-- Navegación -->
+                <div>
+                    <h3 class="text-lg font-bold text-coffee-gold mb-4">Navegación</h3>
+                    <ul class="space-y-3 text-sm">
+                        <li><a href="{% url 'shop:product_list' %}" class="text-gray-300 hover:text-coffee-gold transition"><i class="fas fa-chevron-right mr-2"></i>Inicio</a></li>
+                        <li><a href="{% url 'catalog:product-list' %}" class="text-gray-300 hover:text-coffee-gold transition"><i class="fas fa-chevron-right mr-2"></i>Productos</a></li>
+                        <li><a href="{% url 'cart:cart_detail' %}" class="text-gray-300 hover:text-coffee-gold transition"><i class="fas fa-chevron-right mr-2"></i>Carrito</a></li>
+                    </ul>
+                </div>
+                
+                <!-- Contacto -->
+                <div>
+                    <h3 class="text-lg font-bold text-coffee-gold mb-4">Contacto</h3>
+                    <ul class="space-y-3 text-sm">
+                        <li class="text-gray-300">
+                            <i class="fas fa-envelope text-coffee-gold mr-2"></i>
+                            <a href="mailto:info@kabohacoffee.com" class="hover:text-coffee-gold transition">info@kabohacoffee.com</a>
+                        </li>
+                        <li class="text-gray-300">
+                            <i class="fas fa-phone text-coffee-gold mr-2"></i>
+                            <a href="tel:+573001234567" class="hover:text-coffee-gold transition">+57 300 123 4567</a>
+                        </li>
+                        <li class="text-gray-300">
+                            <i class="fas fa-map-marker-alt text-coffee-gold mr-2"></i>
+                            Risaralda, Colombia
+                        </li>
+                    </ul>
+                </div>
+                
+                <!-- Redes Sociales -->
+                <div>
+                    <h3 class="text-lg font-bold text-coffee-gold mb-4">Síguenos</h3>
+                    <div class="flex space-x-4">
+                        <a href="#" class="bg-coffee-dark hover:bg-coffee-gold text-white hover:text-coffee-dark w-10 h-10 rounded-full flex items-center justify-center transition">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                        <a href="#" class="bg-coffee-dark hover:bg-coffee-gold text-white hover:text-coffee-dark w-10 h-10 rounded-full flex items-center justify-center transition">
+                            <i class="fab fa-facebook"></i>
+                        </a>
+                        <a href="#" class="bg-coffee-dark hover:bg-coffee-gold text-white hover:text-coffee-dark w-10 h-10 rounded-full flex items-center justify-center transition">
+                            <i class="fab fa-twitter"></i>
+                        </a>
+                        <a href="#" class="bg-coffee-dark hover:bg-coffee-gold text-white hover:text-coffee-dark w-10 h-10 rounded-full flex items-center justify-center transition">
+                            <i class="fab fa-whatsapp"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Copyright -->
+            <div class="border-t border-coffee-dark pt-8 text-center text-gray-400 text-sm">
+                <p>&copy; 2026 Kaboha Coffee. Todos los derechos reservados.</p>
+                <p class="mt-2">Diseñado y desarrollado con <i class="fas fa-heart text-coffee-gold"></i> en Colombia</p>
+            </div>
+        </div>
+    </footer>
+    
+    {% block extra_js %}{% endblock %}
+</body>
+</html>
