@@ -12,6 +12,7 @@ class Order(models.Model):
     updated = models.DateTimeField(auto_now=True)
     paid = models.BooleanField(default=False)
     stripe_id = models.CharField(max_length=555, blank=True, null=True)
+    stock_reduced = models.BooleanField(default=False)  # ✅ FIX: Bandera para evitar reducir stock múltiples veces
 
     class Meta:
         ordering = ['-created']

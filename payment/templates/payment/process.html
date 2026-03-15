@@ -29,11 +29,13 @@ ${{ order.get_total_cost|floatformat:"0"|intcomma }} COP
 
 </p>
 
-<form method="post" action="{% url 'payment:process' %}">
+<form id="payment-form">
 
-{% csrf_token %}
+<div id="payment-element"></div>
 
-<button type="submit" class="btn btn-coffee w-100">
+<div id="payment-errors" style="color: #dc3545; margin-top: 10px; display: none; font-weight: bold;"></div>
+
+<button type="submit" class="btn btn-coffee w-100" id="submit-button" style="margin-top: 20px;">
 
 Proceder al pago
 
@@ -50,5 +52,72 @@ Proceder al pago
 </div>
 
 </section>
+
+<!-- Stripe JS -->
+<script src="https://js.stripe.com/v3/"></script>
+
+<script>
+console.log("✓ Iniciando Stripe Payment Element...");
+console.log("✓ Public Key:", '{{ stripe_public_key }}'[:20] + "...");
+console.log("✓ Client Secret:", '{{ client_secret }}'[:30] + "...");
+
+// ✅ Inicializar Stripe
+const stripe = Stripe('{{ stripe_public_key }}');
+console.log("✓ Stripe inicializado");
+
+// ✅ Crear elements con clientSecret
+const elements = stripe.elements({
+    clientSecret: '{{ client_secret }}'
+});
+console.log("✓ Elements creados");
+
+// ✅ Montar Payment Element
+const paymentElement = elements.create('payment');
+paymentElement.mount('#payment-element');
+console.log("✓ Payment Element montado");
+
+// ✅ Referencias a elementos
+const form = document.getElementById('payment-form');
+const submitButton = document.getElementById('submit-button');
+const paymentErrorsDiv = document.getElementById('payment-errors');
+
+// ✅ Manejador de submit
+form.addEventListener('submit', async (event) => {
+    console.log("✓ Form submitted!");
+    event.preventDefault();
+    submitButton.disabled = true;
+    submitButton.textContent = 'Procesando pago...';
+    paymentErrorsDiv.style.display = 'none';
+
+    try {
+        console.log("✓ Confirmando pago con Stripe...");
+        
+        // ✅ Confirmar el pago
+        const { error } = await stripe.confirmPayment({
+            elements,
+            confirmParams: {
+                return_url: '{{ return_url }}',
+            },
+        });
+
+        // ✅ Manejo de errores
+        if (error) {
+            console.error('❌ Error:', error.message);
+            paymentErrorsDiv.textContent = '❌ Error: ' + error.message;
+            paymentErrorsDiv.style.display = 'block';
+            submitButton.disabled = false;
+            submitButton.textContent = 'Proceder al pago';
+        }
+    } catch (error) {
+        console.error('❌ Error general:', error);
+        paymentErrorsDiv.textContent = '❌ Error: ' + error.message;
+        paymentErrorsDiv.style.display = 'block';
+        submitButton.disabled = false;
+        submitButton.textContent = 'Proceder al pago';
+    }
+});
+
+console.log("✓ Stripe Payment Element completamente iniciado");
+</script>
 
 {% endblock %}

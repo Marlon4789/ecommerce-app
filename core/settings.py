@@ -32,13 +32,18 @@ SECRET_KEY = config("SECRET_KEY")
 DEBUG = config("DEBUG", default=False, cast=bool)
 
 # Hosts permitidos
-ALLOWED_HOSTS = config("ALLOWED_HOSTS", default="*").split(",")
+ALLOWED_HOSTS = config("ALLOWED_HOSTS", default="localhost,127.0.0.1,0.0.0.0,testserver").split(",")
 CSRF_TRUSTED_ORIGINS = [
-    "https://ecommerce-app-production-4a70.up.railway.app"
+    "https://*.railway.app",
+    "https://ecommerce-app-production-4a70.up.railway.app",
+    "http://localhost:8000",
+    "http://127.0.0.1:8000"
 ]
 
-SESSION_COOKIE_SECURE = True
-CSRF_COOKIE_SECURE = True
+SESSION_COOKIE_SECURE = not DEBUG  # Solo en producción
+CSRF_COOKIE_SECURE = not DEBUG  # Solo en producción
+SESSION_COOKIE_HTTPONLY = True
+CSRF_COOKIE_HTTPONLY = True
 
 # =========================================================
 # INSTALLED APPLICATIONS
@@ -80,6 +85,10 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
 
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    
+    # Middleware personalizado
+    'core.middleware.HeaderLoggingMiddleware',
+    'core.middleware.DatabaseConnectionMiddleware',
 ]
 
 
@@ -243,11 +252,20 @@ stripe.api_key = STRIPE_SECRET_KEY
 # CELERY CONFIGURATION
 # =========================================================
 
-CELERY_BROKER_URL = config("REDIS_URL", default="redis://localhost:6379/0")
-CELERY_RESULT_BACKEND = config("REDIS_URL", default="redis://localhost:6379/0")
+REDIS_URL = config("REDIS_URL", default="redis://localhost:6379/0")
+
+CELERY_BROKER_URL = REDIS_URL
+CELERY_RESULT_BACKEND = REDIS_URL
 
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+
+CELERY_TASK_MAX_RETRIES = 3
+CELERY_TASK_TIME_LIMIT = 30 * 60
+CELERY_TASK_SOFT_TIME_LIMIT = 25 * 60
+CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP = True
+CELERY_BROKER_CONNECTION_RETRY = True
 
 
 # =========================================================
@@ -270,6 +288,46 @@ CSRF_TRUSTED_ORIGINS = [
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
+    "formatters": {
+        "verbose": {
+            "format": "{levelname} {asctime} {module} {process:d} {thread:d} {message}",
+            "style": "{",
+        },
+        "simple": {
+            "format": "{levelname} {asctime} {message}",
+            "style": "{",
+        },
+    },
+    "handlers": {
+        "console": {
+            "class": "logging.StreamHandler",
+            "formatter": "simple",
+        },
+        "file": {
+            "class": "logging.FileHandler",
+            "filename": BASE_DIR / "logs" / "django.log",
+            "formatter": "verbose",
+            "level": "INFO",
+        },
+    },
+    "loggers": {
+        "django": {
+            "handlers": ["console", "file"],
+            "level": "INFO",
+        },
+        "orders": {
+            "handlers": ["console", "file"],
+            "level": "DEBUG",
+        },
+        "payment": {
+            "handlers": ["console", "file"],
+            "level": "DEBUG",
+        },
+        "cart": {
+            "handlers": ["console", "file"],
+            "level": "DEBUG",
+        },
+    },
 }
 
 # =========================================================
