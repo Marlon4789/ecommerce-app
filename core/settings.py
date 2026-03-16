@@ -33,12 +33,7 @@ DEBUG = config("DEBUG", default=False, cast=bool)
 
 # Hosts permitidos
 ALLOWED_HOSTS = config("ALLOWED_HOSTS", default="localhost,127.0.0.1,0.0.0.0,testserver").split(",")
-CSRF_TRUSTED_ORIGINS = [
-    "https://*.railway.app",
-    "https://ecommerce-app-production-4a70.up.railway.app",
-    "http://localhost:8000",
-    "http://127.0.0.1:8000"
-]
+
 
 SESSION_COOKIE_SECURE = not DEBUG  # Solo en producción
 CSRF_COOKIE_SECURE = not DEBUG  # Solo en producción
@@ -241,7 +236,7 @@ STRIPE_PUBLISHABLE_KEY = config("STRIPE_PUBLISHABLE_KEY")
 STRIPE_SECRET_KEY = config("STRIPE_SECRET_KEY")
 STRIPE_WEBHOOK_SECRET = config("STRIPE_WEBHOOK_SECRET")
 
-STRIPE_API_VERSION = "2022-11-15"
+STRIPE_API_VERSION = config("STRIPE_API_VERSION", default="2024-12-18.acacia")
 STRIPE_CURRENCY = "cop"
 STRIPE_WEBHOOK_TOLERANCE = 300
 
