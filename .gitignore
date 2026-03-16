@@ -27,6 +27,9 @@ staticfiles/
 venv/
 env/
 .virtualenv/
+start_dev.sh
+COMANDOS_UTILES.sh
+
 
 # IDE files:
 .vscode/

@@ -1,32 +1,43 @@
 {% extends 'admin/base_site.html' %}
 
-{% block title %}Order{{ order.id }}
-{% endblock %}
+{% block title %}Orden #{{ order.id }}{% endblock %}
 
 {% block content %}
-  <h1>Order #{{ order.id }}</h1>
-  <p>Order status: {{ order.paid }}</p>
-  <p>Order total: {{ order.get_total_cost }}</p>
-  <p>Order created: {{ order.created }}</p>
-  <h2>Order items</h2>
-  <table>
-    <thead>
-      <tr>
-        <th>Product</th>
-        <th>Quantity</th>
-        <th>Price</th>
-        <th>Total</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for item in order.items.all %}
-        <tr>
-          <td>{{ item.product.name }}</td>
-          <td>{{ item.quantity }}</td>
-          <td>{{ item.price }}</td>
-          <td>{{ order.get_total_cost }}</td>
-        </tr>
-      {% endfor %}
-    </tbody>
-  </table>
+<h1>Orden #{{ order.id }}</h1>
+
+<ul>
+  <li><strong>Estado:</strong> {% if order.paid %}Pagada ✅{% else %}Pendiente ⏳{% endif %}</li>
+  <li><strong>Cliente:</strong> {{ order.full_name }} ({{ order.email }})</li>
+  <li><strong>Dirección:</strong> {{ order.address }}, {{ order.postal_code }}, {{ order.city }}</li>
+  <li><strong>Fecha:</strong> {{ order.created }}</li>
+  <li><strong>Stripe ID:</strong> {{ order.stripe_id|default:"—" }}</li>
+</ul>
+
+<h2>Productos</h2>
+<table>
+  <thead>
+    <tr>
+      <th>Producto</th>
+      <th>Precio unitario</th>
+      <th>Cantidad</th>
+      <th>Subtotal</th>  <!-- ✅ Corregido: era order.get_total_cost en cada fila -->
+    </tr>
+  </thead>
+  <tbody>
+    {% for item in order.items.all %}
+    <tr>
+      <td>{{ item.product.name }}</td>
+      <td>${{ item.price }}</td>
+      <td>{{ item.quantity }}</td>
+      <td>${{ item.get_cost }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+  <tfoot>
+    <tr>
+      <td colspan="3"><strong>Total</strong></td>
+      <td><strong>${{ order.get_total_cost }}</strong></td>
+    </tr>
+  </tfoot>
+</table>
 {% endblock %}
