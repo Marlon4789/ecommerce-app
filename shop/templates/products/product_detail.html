@@ -1,221 +1,176 @@
 {% extends "layouts/base.html" %}
 {% load humanize %}
 
-{% block title %}{{ product.name }}{% endblock %}
+{% block title %}{{ product.name }} — Kaboha Coffee{% endblock %}
 
 {% block content %}
 
-<div class="container product-detail">
-
-<div class="row align-items-center">
-
-<!-- ============================= -->
-<!-- IMAGEN PRODUCTO -->
-<!-- ============================= -->
-
-<div class="col-md-6 text-center">
-
-{% if product.image %}
-<img src="{{ product.image }}" alt="{{ product.name }}"
-class="detail-image img-fluid">
-{% endif %}
-
-</div>
-
-
-<!-- ============================= -->
-<!-- INFO PRODUCTO -->
-<!-- ============================= -->
-
-<div class="col-md-6">
-
-<!-- BADGES -->
-
-<div class="product-badges mb-2">
-
-<span class="badge bg-coffee">
-Café Premium
-</span>
-
-{% if product.stock < 5 and product.stock > 0 %}
-<span class="badge bg-warning text-dark">
-Últimas unidades
-</span>
-{% endif %}
-
-</div>
-
-
-<h2 class="detail-title">
-{{ product.name }}
-</h2>
-
-<p class="detail-price">
-${{ product.current_price|floatformat:"0"|intcomma }}
-</p>
-
-
-<!-- INFO DEL PRODUCTO -->
-
-<ul class="product-info">
-
-<li>
-<strong>Peso:</strong> {{ product.weight }} g
-</li>
-
-<li>
-<strong>Molienda:</strong> {{ product.get_grinding_type_display }}
-</li>
-
-<li>
-
-<strong>Stock:</strong>
-
-{% if product.stock > 10 %}
-
-<span class="stock-good">
-Disponible
-</span>
-
-{% elif product.stock > 0 %}
-
-<span class="stock-low">
-Quedan {{ product.stock }} unidades
-</span>
-
-{% else %}
-
-<span class="stock-out">
-Agotado
-</span>
-
-{% endif %}
-
-</li>
-
-</ul>
-
-
-{% if product.stock > 0 %}
-
-<form action="{% url 'cart:cart_add' product.id %}" method="post">
-
-{% csrf_token %}
-
-
-<!-- ============================= -->
-<!-- CANTIDAD -->
-<!-- ============================= -->
-
-<div class="col text-center text-md-start mb-4">
-
-<label class="form-label fw-semibold">
-Cantidad
-</label>
-
-<div class="quantity-selector justify-content-center justify-content-md-start">
-
-<button type="button" class="qty-btn" onclick="decreaseQty()">
--
-</button>
-
-<input type="number"
-name="quantity"
-id="quantity"
-value="1"
-min="1"
-max="{{ product.stock }}"
-class="qty-input">
-
-<button type="button" class="qty-btn" onclick="increaseQty()">
-+
-</button>
-
-</div>
-
-</div>
-
-
-{{ cart_add_form.override }}
-
-
-<!-- BOTON AGREGAR AL CARRITO -->
-
-<button class="btn btn-coffee btn-lg w-100 add-cart-btn mb-3">
-
-<i class="fa-solid fa-cart-shopping"></i>
-
-Agregar al carrito
-
-</button>
-
-
-<a href="{% url 'shop:product_list' %}"
-class="btn btn-outline-secondary">
-
-Volver
-
-</a>
-
-</form>
-
-{% else %}
-
-<p class="text-danger fw-bold">
-Producto agotado
-</p>
-
-{% endif %}
-
-</div>
-
-</div>
+<div class="product-detail">
+  <div class="container">
+    <div class="row align-items-start g-4 g-lg-5">
+
+      <!-- ============================= -->
+      <!-- IMAGEN PRODUCTO               -->
+      <!-- ============================= -->
+      <div class="col-md-6 text-center">
+        <div class="detail-image-wrap">
+          {% if product.image %}
+            <img src="{{ product.image }}"
+                 alt="{{ product.name }}"
+                 loading="eager">
+          {% else %}
+            <div class="detail-image-placeholder">
+              <i class="fa-solid fa-mug-hot"></i>
+              <span>Sin imagen</span>
+            </div>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- ============================= -->
+      <!-- INFO PRODUCTO                 -->
+      <!-- ============================= -->
+      <div class="col-md-6">
+        <div class="detail-info-panel">
+
+          <!-- BADGES -->
+          <div class="product-badges">
+            <span class="badge bg-coffee">Café Premium</span>
+            {% if product.stock < 5 and product.stock > 0 %}
+              <span class="badge badge-low-stock">Últimas unidades</span>
+            {% endif %}
+            {% if product.on_sale %}
+              <span class="badge badge-sale">Oferta</span>
+            {% endif %}
+          </div>
+
+          <!-- NOMBRE -->
+          <h2 class="detail-title">{{ product.name }}</h2>
+
+          <!-- PRECIO -->
+          <p class="detail-price">
+            ${{ product.current_price|floatformat:"0"|intcomma }}
+            {% if product.on_sale and product.price %}
+              <span class="detail-price-original">
+                ${{ product.price|floatformat:"0"|intcomma }}
+              </span>
+            {% endif %}
+          </p>
+
+          <!-- INFO DEL PRODUCTO -->
+          <ul class="product-info">
+            <li>
+              <strong>Peso</strong>
+              <span>{{ product.weight }} g</span>
+            </li>
+            <li>
+              <strong>Molienda</strong>
+              <span>{{ product.get_grinding_type_display }}</span>
+            </li>
+            <li>
+              <strong>Stock</strong>
+              <span>
+                {% if product.stock > 10 %}
+                  <span class="stock-good">
+                    <i class="fa-solid fa-circle-check me-1"></i>Disponible
+                  </span>
+                {% elif product.stock > 0 %}
+                  <span class="stock-low">
+                    Quedan {{ product.stock }} unidades
+                  </span>
+                {% else %}
+                  <span class="stock-out">
+                    <i class="fa-solid fa-circle-xmark me-1"></i>Agotado
+                  </span>
+                {% endif %}
+              </span>
+            </li>
+          </ul>
+
+          <!-- FORMULARIO -->
+          {% if product.stock > 0 %}
+            <form action="{% url 'cart:cart_add' product.id %}" method="post">
+              {% csrf_token %}
+
+              <!-- CANTIDAD -->
+              <div class="mb-4">
+                <label class="qty-label">Cantidad</label>
+                <div class="quantity-selector">
+                  <button type="button" class="qty-btn" onclick="decreaseQty()">−</button>
+                  <input type="number"
+                         name="quantity"
+                         id="quantity"
+                         value="1"
+                         min="1"
+                         max="{{ product.stock }}"
+                         class="qty-input">
+                  <button type="button" class="qty-btn" onclick="increaseQty()">+</button>
+                </div>
+              </div>
+
+              {{ cart_add_form.override }}
+
+              <!-- AGREGAR AL CARRITO -->
+              <button type="submit" class="btn btn-coffee btn-lg w-100 add-cart-btn mb-3">
+                <i class="fa-solid fa-cart-shopping"></i>
+                Agregar al carrito
+              </button>
+
+              <!-- VOLVER -->
+              <a href="{% url 'shop:product_catalog' %}" class="btn btn-coffee-outline w-100">
+                <i class="fa-solid fa-arrow-left me-2"></i>Volver al catálogo
+              </a>
+
+            </form>
+
+          {% else %}
+
+            <div class="stock-out-banner">
+              <p class="mb-0">
+                <i class="fa-solid fa-circle-xmark me-2"></i>Producto agotado
+              </p>
+            </div>
+
+            <a href="{% url 'shop:product_catalog' %}" class="btn btn-coffee-outline w-100">
+              <i class="fa-solid fa-arrow-left me-2"></i>Volver al catálogo
+            </a>
+
+          {% endif %}
+
+        </div><!-- /detail-info-panel -->
+      </div>
+
+    </div><!-- /row -->
+
+    <!-- ============================= -->
+    <!-- DESCRIPCIÓN                   -->
+    <!-- ============================= -->
+    <div class="row mt-5 description-section">
+      <div class="col-md-8">
+        <div class="catalog-divider"></div>
+        <h4>Descripción</h4>
+        <p>{{ product.description|linebreaks }}</p>
+      </div>
+    </div>
+
+  </div><!-- /container -->
+</div><!-- /product-detail -->
 
 
 <!-- ============================= -->
-<!-- DESCRIPCION -->
+<!-- SCRIPT CANTIDAD               -->
 <!-- ============================= -->
-
-<div class="row mt-5">
-
-<div class="col-md-8">
-
-<h4>Descripción</h4>
-
-<p>
-{{ product.description|linebreaks }}
-</p>
-
-</div>
-
-</div>
-
-</div>
-
-
-<!-- ============================= -->
-<!-- SCRIPT CANTIDAD -->
-<!-- ============================= -->
-
 <script>
+  function increaseQty() {
+    const qty = document.getElementById('quantity');
+    const max = parseInt(qty.max);
+    if (parseInt(qty.value) < max) qty.value = parseInt(qty.value) + 1;
+  }
 
-function increaseQty(){
-let qty = document.getElementById("quantity");
-let max = parseInt(qty.max);
-
-if(parseInt(qty.value) < max){
-qty.value = parseInt(qty.value) + 1;
-}
-}
-
-function decreaseQty(){
-let qty = document.getElementById("quantity");
-
-if(qty.value > 1){
-qty.value = parseInt(qty.value) - 1;
-}
-}
-
+  function decreaseQty() {
+    const qty = document.getElementById('quantity');
+    if (parseInt(qty.value) > 1) qty.value = parseInt(qty.value) - 1;
+  }
 </script>
 
 {% endblock %}

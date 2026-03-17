@@ -2,42 +2,369 @@
 
 {% block title %}Orden #{{ order.id }}{% endblock %}
 
+{% block extrastyle %}
+{{ block.super }}
+<style>
+  /* ============================================
+     KABOHA ADMIN — Order Detail
+     Dark luxury palette over Django admin base
+     ============================================ */
+
+  :root {
+    --k-bg:           #0d0905;
+    --k-surface:      #15100a;
+    --k-surface-2:    #1c1208;
+    --k-accent:       #c8873a;
+    --k-accent-h:     #d9983f;
+    --k-text:         #f5ede2;
+    --k-text-muted:   #a08060;
+    --k-text-faint:   #7a6248;
+    --k-border:       rgba(200, 135, 58, 0.18);
+    --k-border-h:     rgba(200, 135, 58, 0.38);
+    --k-success:      #4caf74;
+    --k-warning:      #dcaa00;
+    --k-danger:       #e05252;
+    --k-radius:       6px;
+  }
+
+  /* Page wrapper */
+  #content {
+    background: var(--k-bg) !important;
+    color: var(--k-text) !important;
+  }
+
+  /* ---- Order Header ---- */
+  .order-admin-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 32px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--k-border);
+  }
+
+  .order-admin-id {
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: var(--k-text);
+    letter-spacing: -0.02em;
+  }
+
+  .order-admin-id span {
+    color: var(--k-accent);
+  }
+
+  /* ---- Status Badge ---- */
+  .order-status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    padding: 5px 13px;
+    border-radius: var(--k-radius);
+  }
+
+  .order-status-badge.paid {
+    background: rgba(76, 175, 116, 0.15);
+    color: var(--k-success);
+    border: 1px solid rgba(76, 175, 116, 0.3);
+  }
+
+  .order-status-badge.pending {
+    background: rgba(220, 170, 0, 0.12);
+    color: var(--k-warning);
+    border: 1px solid rgba(220, 170, 0, 0.3);
+  }
+
+  /* ---- Info Grid ---- */
+  .order-info-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+    margin-bottom: 32px;
+  }
+
+  @media (max-width: 768px) {
+    .order-info-grid { grid-template-columns: 1fr; }
+  }
+
+  .order-info-card {
+    background: var(--k-surface);
+    border: 1px solid var(--k-border);
+    border-radius: var(--k-radius);
+    padding: 20px 22px;
+  }
+
+  .order-info-card-label {
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--k-text-faint);
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+  }
+
+  .order-info-card-label i {
+    color: var(--k-accent);
+    font-size: 0.75rem;
+  }
+
+  .order-info-card-value {
+    font-size: 0.92rem;
+    color: var(--k-text-muted);
+    line-height: 1.5;
+  }
+
+  .order-info-card-value strong {
+    color: var(--k-text);
+    font-weight: 600;
+  }
+
+  /* ---- Products Table ---- */
+  .order-products-title {
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--k-accent);
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .order-products-title::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--k-border);
+  }
+
+  .order-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    background: var(--k-surface);
+    border: 1px solid var(--k-border);
+    border-radius: var(--k-radius);
+    overflow: hidden;
+    margin-bottom: 0;
+  }
+
+  .order-table thead tr {
+    background: var(--k-surface-2);
+  }
+
+  .order-table th {
+    padding: 12px 18px;
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--k-text-faint);
+    border-bottom: 1px solid var(--k-border);
+    text-align: left;
+    white-space: nowrap;
+  }
+
+  .order-table td {
+    padding: 14px 18px;
+    font-size: 0.88rem;
+    color: var(--k-text-muted);
+    border-bottom: 1px solid rgba(200, 135, 58, 0.06);
+    vertical-align: middle;
+  }
+
+  .order-table tbody tr:last-child td {
+    border-bottom: none;
+  }
+
+  .order-table tbody tr:hover td {
+    background: rgba(200, 135, 58, 0.04);
+    color: var(--k-text);
+  }
+
+  .order-table .product-name {
+    color: var(--k-text);
+    font-weight: 500;
+  }
+
+  .order-table .price-cell {
+    color: var(--k-accent);
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Tfoot total row */
+  .order-table tfoot tr {
+    background: var(--k-surface-2);
+  }
+
+  .order-table tfoot td {
+    padding: 16px 18px;
+    border-top: 1px solid var(--k-border);
+    border-bottom: none;
+    font-size: 0.9rem;
+    color: var(--k-text-muted);
+  }
+
+  .order-table tfoot .total-label {
+    color: var(--k-text);
+    font-weight: 700;
+    font-size: 0.8rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .order-table tfoot .total-value {
+    color: var(--k-accent);
+    font-size: 1.1rem;
+    font-weight: 700;
+  }
+
+  /* ---- Stripe ID ---- */
+  .stripe-id-wrap {
+    margin-top: 20px;
+    padding: 14px 18px;
+    background: var(--k-surface);
+    border: 1px solid var(--k-border);
+    border-radius: var(--k-radius);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .stripe-id-label {
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--k-text-faint);
+    white-space: nowrap;
+  }
+
+  .stripe-id-value {
+    font-size: 0.8rem;
+    color: var(--k-text-muted);
+    font-family: 'Courier New', monospace;
+    word-break: break-all;
+  }
+</style>
+{% endblock %}
+
 {% block content %}
-<h1>Orden #{{ order.id }}</h1>
 
-<ul>
-  <li><strong>Estado:</strong> {% if order.paid %}Pagada ✅{% else %}Pendiente ⏳{% endif %}</li>
-  <li><strong>Cliente:</strong> {{ order.full_name }} ({{ order.email }})</li>
-  <li><strong>Dirección:</strong> {{ order.address }}, {{ order.postal_code }}, {{ order.city }}</li>
-  <li><strong>Fecha:</strong> {{ order.created }}</li>
-  <li><strong>Stripe ID:</strong> {{ order.stripe_id|default:"—" }}</li>
-</ul>
+<!-- HEADER -->
+<div class="order-admin-header">
+  <h1 class="order-admin-id">
+    Orden <span>#{{ order.id }}</span>
+  </h1>
+  {% if order.paid %}
+    <span class="order-status-badge paid">
+      <i class="fa-solid fa-circle-check"></i> Pagada
+    </span>
+  {% else %}
+    <span class="order-status-badge pending">
+      <i class="fa-solid fa-clock"></i> Pendiente
+    </span>
+  {% endif %}
+</div>
 
-<h2>Productos</h2>
-<table>
+<!-- INFO GRID -->
+<div class="order-info-grid">
+
+  <div class="order-info-card">
+    <div class="order-info-card-label">
+      <i class="fa-solid fa-user"></i> Cliente
+    </div>
+    <div class="order-info-card-value">
+      <strong>{{ order.full_name }}</strong><br>
+      {{ order.email }}
+    </div>
+  </div>
+
+  <div class="order-info-card">
+    <div class="order-info-card-label">
+      <i class="fa-solid fa-location-dot"></i> Dirección de envío
+    </div>
+    <div class="order-info-card-value">
+      {{ order.address }}<br>
+      {{ order.postal_code }}, {{ order.city }}
+    </div>
+  </div>
+
+  <div class="order-info-card">
+    <div class="order-info-card-label">
+      <i class="fa-solid fa-calendar"></i> Fecha del pedido
+    </div>
+    <div class="order-info-card-value">
+      <strong>{{ order.created }}</strong>
+    </div>
+  </div>
+
+  <div class="order-info-card">
+    <div class="order-info-card-label">
+      <i class="fa-solid fa-credit-card"></i> Estado del pago
+    </div>
+    <div class="order-info-card-value">
+      {% if order.paid %}
+        <strong style="color: var(--k-success);">
+          <i class="fa-solid fa-circle-check me-1"></i>Pago completado
+        </strong>
+      {% else %}
+        <strong style="color: var(--k-warning);">
+          <i class="fa-solid fa-clock me-1"></i>Pago pendiente
+        </strong>
+      {% endif %}
+    </div>
+  </div>
+
+</div>
+
+<!-- PRODUCTOS -->
+<div class="order-products-title">
+  <i class="fa-solid fa-box-open"></i> Productos del pedido
+</div>
+
+<table class="order-table">
   <thead>
     <tr>
       <th>Producto</th>
       <th>Precio unitario</th>
       <th>Cantidad</th>
-      <th>Subtotal</th>  <!-- ✅ Corregido: era order.get_total_cost en cada fila -->
+      <th>Subtotal</th>
     </tr>
   </thead>
   <tbody>
     {% for item in order.items.all %}
     <tr>
-      <td>{{ item.product.name }}</td>
+      <td class="product-name">{{ item.product.name }}</td>
       <td>${{ item.price }}</td>
       <td>{{ item.quantity }}</td>
-      <td>${{ item.get_cost }}</td>
+      <td class="price-cell">${{ item.get_cost }}</td>
     </tr>
     {% endfor %}
   </tbody>
   <tfoot>
     <tr>
-      <td colspan="3"><strong>Total</strong></td>
-      <td><strong>${{ order.get_total_cost }}</strong></td>
+      <td colspan="3" class="total-label">Total del pedido</td>
+      <td class="total-value">${{ order.get_total_cost }}</td>
     </tr>
   </tfoot>
 </table>
+
+<!-- STRIPE ID -->
+{% if order.stripe_id %}
+<div class="stripe-id-wrap">
+  <span class="stripe-id-label">Stripe ID</span>
+  <span class="stripe-id-value">{{ order.stripe_id }}</span>
+</div>
+{% endif %}
+
 {% endblock %}

@@ -1,28 +1,37 @@
 {% extends "layouts/base.html" %}
 {% load humanize %}
-{% block title %}Inicio{% endblock %}
+{% block title %}Inicio — Kaboha Coffee{% endblock %}
+
 {% block content %}
 
 <!-- ====================================== -->
-<!-- HERO SECTION RESPONSIVE               -->
+<!-- HERO SECTION                          -->
 <!-- ====================================== -->
 <section id="inicio" class="hero-coffee">
   <div class="container">
-    <div class="row align-items-center">
+    <div class="row align-items-center g-5">
 
       <!-- TEXTO HERO -->
       <div class="col-lg-6 text-center text-lg-start">
+
+        <span class="catalog-hero-label">
+          <i class="fa-solid fa-mug-hot me-1"></i> Kaboha Coffee
+        </span>
+
         <h1 class="hero-title">
-          El verdadero sabor del
+          El verdadero sabor del<br>
           <span>Café Colombiano</span>
         </h1>
+
         <p class="hero-subtitle">
           Disfruta café premium cultivado en las montañas de Colombia.
-          Aroma intenso y sabor auténtico.
+          Aroma intenso y sabor auténtico, directo a tu taza.
         </p>
-        <a href="{% url 'shop:product_catalog' %}" class="btn btn-coffee mt-3">
-          Ver productos
+
+        <a href="{% url 'shop:product_catalog' %}" class="btn btn-coffee mt-4">
+          <i class="fa-solid fa-arrow-right me-2"></i>Ver productos
         </a>
+
       </div>
 
       <!-- IMAGEN HERO (SOLO DESKTOP) -->
@@ -30,21 +39,149 @@
         <img
           src="https://media.istockphoto.com/id/489377142/es/foto/blanco-taza-de-caf%C3%A9-con-granos-de-caf%C3%A9-sobre-fondo-oscuro.jpg?s=612x612&w=0&k=20&c=k9Gd_xcL99_7A3SIuwVSLN3MMNjOwXVBE7n4dkQatw0="
           class="hero-image"
-          alt="Café">
+          alt="Taza de café colombiano">
       </div>
+
     </div>
   </div>
 </section>
 
+
 <!-- ====================================== -->
-<!-- WHOLESALE / DISTRIBUCION PARA NEGOCIOS -->
+<!-- PRODUCTOS DESTACADOS                  -->
 <!-- ====================================== -->
-<section id="bussiness" class="wholesale-section my-3">
+<section id="featured" class="featured-section">
   <div class="container">
 
+    <!-- ENCABEZADO -->
+    <div class="featured-header">
+      <div class="featured-header-text">
+        <span class="catalog-hero-label">
+          <i class="fa-solid fa-star me-1"></i> Selección del mes
+        </span>
+        <h2 class="featured-title">
+          Cada sorbo cuenta<br>
+          una <span>historia</span>
+        </h2>
+        <p class="featured-subtitle">
+          Desde las laderas del Eje Cafetero hasta tu mesa —
+          estos son los granos que nuestros caficultores cosechan
+          con más cuidado. Cada perfil de sabor es único,
+          como la tierra que lo vio nacer.
+        </p>
+      </div>
+
+      <!-- STATS decorativos -->
+      <div class="featured-stats">
+        <div class="featured-stat">
+          <span class="featured-stat-num">100%</span>
+          <span class="featured-stat-label">Origen colombiano</span>
+        </div>
+        <div class="featured-stat-divider"></div>
+        <div class="featured-stat">
+          <span class="featured-stat-num">+5</span>
+          <span class="featured-stat-label">Perfiles de sabor</span>
+        </div>
+        <div class="featured-stat-divider"></div>
+        <div class="featured-stat">
+          <span class="featured-stat-num">3</span>
+          <span class="featured-stat-label">Tipos de molienda</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- GRID PRODUCTOS (máx 8) -->
+    <div class="featured-grid">
+      {% for product in products|slice:":6" %}
+      <div class="featured-card">
+
+        <!-- IMAGEN -->
+        <a href="{% url 'shop:product_detail' slug=product.slug %}" class="featured-card-img-link">
+          <div class="featured-card-img">
+            {% if product.image %}
+              <img src="{{ product.image }}" alt="{{ product.name }}" loading="lazy">
+            {% else %}
+              <div class="featured-card-img-placeholder">
+                <i class="fa-solid fa-mug-hot"></i>
+              </div>
+            {% endif %}
+
+            <!-- BADGES -->
+            <div class="featured-card-badges">
+              {% if product.on_sale %}
+                <span class="badge-sale">Oferta</span>
+              {% endif %}
+              {% if product.stock > 0 and product.stock < 5 %}
+                <span class="badge-low-stock">Últimas unidades</span>
+              {% endif %}
+            </div>
+
+            <!-- OVERLAY hover -->
+            <div class="featured-card-overlay">
+              <span class="featured-card-overlay-text">
+                <i class="fa-solid fa-eye me-1"></i> Ver detalles
+              </span>
+            </div>
+          </div>
+        </a>
+
+        <!-- BODY -->
+        <div class="featured-card-body">
+          <h6 class="featured-card-name">{{ product.name }}</h6>
+          <div class="featured-card-footer">
+            <p class="featured-card-price">
+              ${{ product.current_price|floatformat:"0"|intcomma }}
+              {% if product.on_sale and product.price %}
+                <span class="featured-card-price-old">
+                  ${{ product.price|floatformat:"0"|intcomma }}
+                </span>
+              {% endif %}
+            </p>
+            <a href="{% url 'shop:product_detail' slug=product.slug %}"
+               class="featured-card-buy-btn">
+              <i class="fa-solid fa-cart-shopping me-1"></i>Comprar
+            </a>
+          </div>
+        </div>
+
+      </div>
+      {% empty %}
+      <div class="featured-empty">
+        <i class="fa-solid fa-mug-saucer"></i>
+        <p>Pronto tendremos productos disponibles.</p>
+      </div>
+      {% endfor %}
+    </div>
+
+    <!-- CTA VER MÁS -->
+    <div class="featured-cta">
+      <div class="featured-cta-inner">
+        <p class="featured-cta-text">
+          Explora nuestra colección completa y encuentra el café
+          que se adapta a tu ritual de cada día.
+        </p>
+        <a href="{% url 'shop:product_catalog' %}" class="btn btn-coffee featured-cta-btn">
+          <i class="fa-solid fa-grid-2 me-2"></i>Ver catálogo completo
+        </a>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+
+<!-- ====================================== -->
+<!-- WHOLESALE / NEGOCIOS                  -->
+<!-- ====================================== -->
+<section id="bussiness" class="wholesale-section">
+  <div class="container mb-5">
+
     <!-- TITULO -->
-    <div class="row justify-content-center text-center mb-4">
-      <div class="col-lg-8">
+    <div class="row justify-content-center text-center mb-5">
+      <div class="col-lg-7">
+        <span class="catalog-hero-label">
+          <i class="fa-solid fa-handshake me-1"></i> Distribución
+        </span>
         <h2 class="wholesale-title">
           Café Colombiano para tu Negocio
         </h2>
@@ -57,8 +194,9 @@
 
     <!-- BENEFICIOS -->
     <div class="row g-4 justify-content-center">
+
       <div class="col-md-4">
-        <div class="card wholesale-card bg-dark text-white">
+        <div class="card wholesale-card">
           <div class="card-body">
             <i class="fa-solid fa-mug-hot wholesale-icon"></i>
             <h5>Café premium</h5>
@@ -69,8 +207,9 @@
           </div>
         </div>
       </div>
+
       <div class="col-md-4">
-        <div class="card wholesale-card bg-dark text-white">
+        <div class="card wholesale-card">
           <div class="card-body">
             <i class="fa-solid fa-box-open wholesale-icon"></i>
             <h5>Precios al por mayor</h5>
@@ -81,8 +220,9 @@
           </div>
         </div>
       </div>
+
       <div class="col-md-4">
-        <div class="card wholesale-card bg-dark text-white">
+        <div class="card wholesale-card">
           <div class="card-body">
             <i class="fa-solid fa-truck wholesale-icon"></i>
             <h5>Suministro confiable</h5>
@@ -93,20 +233,21 @@
           </div>
         </div>
       </div>
+
     </div>
 
     <!-- CONTACTO -->
-    <div class="row justify-content-center my-5">
+    <div class="row justify-content-center mt-5 pb-2">
       <div class="col-lg-8 text-center">
-        <h4 class="mb-4">¿Quieres vender nuestro café en tu negocio?</h4>
+        <h4 class="wholesale-contact-title my-4">
+          Abastece tu tienda con nuestros productos
+        </h4>
         <div class="contact-buttons">
           <a href="https://wa.me/573000000000" class="btn btn-coffee contact-btn-wp">
-            <i class="fa-brands fa-whatsapp"></i>
-            Contactar por WhatsApp
+            <i class="fa-brands fa-whatsapp me-2"></i>Contactar por WhatsApp
           </a>
-          <a href="mailto:tuemail@correo.com" class="btn btn-coffee-outline contact-btn-email">
-            <i class="fa-solid fa-envelope"></i>
-            Contactar por Email
+          <a href="mailto:yarmdev@gmail.com" class="btn btn-coffee-outline contact-btn-email">
+            <i class="fa-solid fa-envelope me-2"></i>Contactar por Email
           </a>
         </div>
       </div>
