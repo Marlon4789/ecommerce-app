@@ -1,12 +1,61 @@
 {% extends "layouts/base.html" %}
-{% block title %}Pedido Realizado{% endblock %}
+{% load humanize %}
+{% block title %}Pedido Confirmado — Kaboha Coffee{% endblock %}
+
 {% block content %}
-<div class="container">
-    <h1 class="text-success mb-4">¡Gracias!</h1>
-    <p class="lead">Su pedido se ha realizado correctamente. Su número de pedido es <strong>{{ order.id }}</strong>.</p>
-    <p>Le enviaremos un correo electrónico con los detalles y la información de seguimiento una vez que se envíe su pedido.</p>
-    <div class="mt-4">
-        <a href="{% url 'shop:product_list' %}" class="btn btn-primary">Continuar Comprando</a>
+
+<section class="order-confirm-section">
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-lg-6 col-md-8">
+
+        <div class="order-confirm-card">
+
+          <!-- ÍCONO ANIMADO -->
+          <div class="order-confirm-icon-wrap">
+            <div class="order-confirm-ring"></div>
+            <i class="fa-solid fa-circle-check order-confirm-icon"></i>
+          </div>
+
+          <!-- TÍTULO -->
+          <h1 class="order-confirm-title">
+            ¡Pedido <span>confirmado</span>!
+          </h1>
+
+          <p class="order-confirm-sub">
+            Gracias por tu compra. Hemos recibido tu pedido y lo estamos procesando.
+          </p>
+
+          <!-- NÚMERO DE PEDIDO -->
+          <div class="order-confirm-number">
+            <span class="order-confirm-number-label">Número de pedido</span>
+            <span class="order-confirm-number-value">#{{ order.id }}</span>
+          </div>
+
+          <div class="catalog-divider"></div>
+
+          <!-- MENSAJE -->
+          <p class="order-confirm-message">
+            <i class="fa-solid fa-envelope me-2"></i>
+            Te enviaremos un correo con los detalles y la información de seguimiento
+            cuando tu pedido sea despachado.
+          </p>
+
+          <!-- ACCIONES -->
+          <div class="order-confirm-actions">
+            <a href="{% url 'shop:product_catalog' %}" class="btn btn-coffee">
+              <i class="fa-solid fa-arrow-left me-2"></i>Seguir comprando
+            </a>
+            <a href="{% url 'shop:product_list' %}" class="btn btn-coffee-outline">
+              <i class="fa-solid fa-house me-2"></i>Ir al inicio
+            </a>
+          </div>
+
+        </div><!-- /order-confirm-card -->
+
+      </div>
     </div>
-</div>
+  </div>
+</section>
+
 {% endblock %}

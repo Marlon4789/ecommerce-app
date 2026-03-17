@@ -1,0 +1,176 @@
+{% extends "layouts/base.html" %}
+{% load humanize %}
+{% block title %}Productos — Kaboha Coffee{% endblock %}
+
+{% block content %}
+
+<!-- ============================== -->
+<!-- HERO CATALOG                   -->
+<!-- ============================== -->
+<section class="catalog-hero">
+  <div class="container text-center">
+
+    <div class="catalog-hero-label">
+      <i class="fa-solid fa-mug-hot me-1"></i> Kaboha Coffee
+    </div>
+
+    <h1 class="catalog-hero-title">
+      Nuestros <span>Productos</span>
+    </h1>
+
+    <p class="catalog-hero-sub">
+      Café premium de origen colombiano.
+      Encuentra el perfil de sabor que más te gusta.
+    </p>
+
+    <!-- BUSCADOR -->
+    <div class="search-wrap">
+      <i class="fa-solid fa-magnifying-glass search-icon"></i>
+      <input
+        type="text"
+        id="searchInput"
+        class="search-input"
+        placeholder="Buscar producto...">
+      <button class="search-clear" id="searchClear" title="Limpiar">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+
+  </div>
+</section>
+
+
+<!-- ============================== -->
+<!-- CATALOG SECTION                -->
+<!-- ============================== -->
+<section class="catalog-section">
+  <div class="container">
+
+    <!-- META -->
+    <div class="catalog-meta d-flex align-items-center justify-content-between flex-wrap gap-2">
+      <p class="products-count mb-0" id="productsCount">
+        Mostrando <span id="countNum">{{ products|length }}</span>
+        producto{% if products|length != 1 %}s{% endif %}
+      </p>
+    </div>
+
+    <div class="catalog-divider mt-3"></div>
+
+    <!-- GRID DE PRODUCTOS -->
+    <div class="product-grid" id="productsGrid">
+
+      {% for product in products %}
+      <div class="catalog-card" data-name="{{ product.name|lower }}">
+
+        <!-- IMAGEN -->
+        <div class="card-image-wrap">
+          {% if product.image %}
+            <img src="{{ product.image }}" alt="{{ product.name }}" loading="lazy">
+          {% else %}
+            <div class="card-image-placeholder">
+              <i class="fa-solid fa-mug-hot"></i>
+            </div>
+          {% endif %}
+
+          <!-- BADGES -->
+          <div class="card-badges">
+            {% if product.on_sale %}
+              <span class="badge-sale">Oferta</span>
+            {% endif %}
+            {% if product.stock > 0 and product.stock < 5 %}
+              <span class="badge-low-stock">Últimas unidades</span>
+            {% endif %}
+          </div>
+        </div>
+
+        <!-- BODY -->
+        <div class="catalog-card-body">
+          <h6 class="catalog-card-name">{{ product.name }}</h6>
+          <p class="catalog-card-price">
+            ${{ product.current_price|floatformat:"0"|intcomma }}
+            {% if product.on_sale and product.price %}
+              <span class="original-price">${{ product.price|floatformat:"0"|intcomma }}</span>
+            {% endif %}
+          </p>
+          <a href="{% url 'shop:product_detail' slug=product.slug %}"
+             class="btn btn-coffee-outline">
+            Ver detalles
+          </a>
+        </div>
+
+      </div>
+      {% empty %}
+      <div class="empty-state visible">
+        <div class="empty-icon"><i class="fa-solid fa-mug-saucer"></i></div>
+        <p class="empty-title">No hay productos disponibles</p>
+        <p class="empty-sub">Vuelve pronto, estamos preparando algo especial.</p>
+      </div>
+      {% endfor %}
+
+    </div><!-- /product-grid -->
+
+    <!-- EMPTY STATE búsqueda -->
+    <div class="empty-state" id="emptySearch">
+      <div class="empty-icon"><i class="fa-solid fa-magnifying-glass"></i></div>
+      <p class="empty-title">Sin resultados para tu búsqueda</p>
+      <p class="empty-sub">
+        Intenta con otro nombre o
+        <button onclick="clearSearch()"
+                style="background:none;border:none;color:var(--color-accent);cursor:pointer;padding:0;font-size:inherit;">
+          limpia el buscador
+        </button>.
+      </p>
+    </div>
+
+  </div>
+</section>
+
+
+<!-- ============================== -->
+<!-- SCRIPT — BUSCADOR EN TIEMPO REAL -->
+<!-- ============================== -->
+<script>
+  const searchInput  = document.getElementById('searchInput');
+  const searchClear  = document.getElementById('searchClear');
+  const productsGrid = document.getElementById('productsGrid');
+  const emptySearch  = document.getElementById('emptySearch');
+  const countNum     = document.getElementById('countNum');
+
+  // Stagger animation on load
+  document.querySelectorAll('.catalog-card').forEach((card, i) => {
+    setTimeout(() => card.classList.add('visible'), 60 + i * 70);
+  });
+
+  // Live search
+  searchInput.addEventListener('input', () => {
+    const query = searchInput.value.trim().toLowerCase();
+    searchClear.classList.toggle('visible', query.length > 0);
+    filterProducts(query);
+  });
+
+  function filterProducts(query) {
+    const cards = productsGrid.querySelectorAll('.catalog-card');
+    let visible = 0;
+
+    cards.forEach(card => {
+      const name  = card.dataset.name || '';
+      const match = name.includes(query);
+      card.style.display = match ? '' : 'none';
+      if (match) visible++;
+    });
+
+    countNum.textContent = visible;
+    emptySearch.classList.toggle('visible', visible === 0 && query.length > 0);
+  }
+
+  function clearSearch() {
+    searchInput.value = '';
+    searchClear.classList.remove('visible');
+    filterProducts('');
+    searchInput.focus();
+  }
+
+  searchClear.addEventListener('click', clearSearch);
+</script>
+
+{% endblock %}

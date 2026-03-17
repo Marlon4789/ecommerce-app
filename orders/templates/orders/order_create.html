@@ -1,87 +1,107 @@
 {% extends "layouts/base.html" %}
-{% block title %}Crear Pedido{% endblock %}
 {% load humanize %}
+{% block title %}Finalizar Compra — Kaboha Coffee{% endblock %}
 
 {% block content %}
 
 <section class="checkout-section">
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-lg-6 col-xl-5">
 
-<div class="container">
+        <!-- HEADER -->
+        <div class="checkout-header">
+          <span class="catalog-hero-label">
+            <i class="fa-solid fa-lock me-1"></i> Pago seguro
+          </span>
+          <h1 class="checkout-page-title">
+            Finalizar <span>compra</span>
+          </h1>
+        </div>
 
-<div class="row justify-content-center">
+        <!-- RESUMEN DEL PEDIDO -->
+        <div class="order-summary-box">
+          <div class="order-summary-row">
+            <span class="order-summary-label">
+              <i class="fa-solid fa-bag-shopping me-2"></i>Total del pedido
+            </span>
+            <strong class="order-summary-price">
+              ${{ cart.get_total_price|floatformat:"0"|intcomma }}
+            </strong>
+          </div>
+        </div>
 
-<div class="col-lg-6">
+        <!-- FORMULARIO -->
+        <div class="checkout-card">
+          <form method="post" novalidate class="checkout-form">
+            {% csrf_token %}
 
-<div class="checkout-card">
+            <!-- NOMBRE COMPLETO -->
+            <div class="checkout-field">
+              <label class="checkout-label">Nombre completo</label>
+              {{ form.full_name }}
+              {% if form.full_name.errors %}
+                <span class="checkout-error">{{ form.full_name.errors|join:", " }}</span>
+              {% endif %}
+            </div>
 
-<h2 class="checkout-title">
-<i class="fa-solid fa-bag-shopping"></i> Finalizar compra
-</h2>
+            <!-- EMAIL -->
+            <div class="checkout-field">
+              <label class="checkout-label">Email</label>
+              {{ form.email }}
+              {% if form.email.errors %}
+                <span class="checkout-error">{{ form.email.errors|join:", " }}</span>
+              {% endif %}
+            </div>
 
-<!-- TOTAL -->
+            <!-- DIRECCIÓN -->
+            <div class="checkout-field">
+              <label class="checkout-label">Dirección</label>
+              {{ form.address }}
+              {% if form.address.errors %}
+                <span class="checkout-error">{{ form.address.errors|join:", " }}</span>
+              {% endif %}
+            </div>
 
-<div class="order-summary">
+            <!-- CÓDIGO POSTAL + CIUDAD -->
+            <div class="row g-3">
+              <div class="col-6">
+                <div class="checkout-field">
+                  <label class="checkout-label">Código postal</label>
+                  {{ form.postal_code }}
+                  {% if form.postal_code.errors %}
+                    <span class="checkout-error">{{ form.postal_code.errors|join:", " }}</span>
+                  {% endif %}
+                </div>
+              </div>
+              <div class="col-6">
+                <div class="checkout-field">
+                  <label class="checkout-label">Ciudad</label>
+                  {{ form.city }}
+                  {% if form.city.errors %}
+                    <span class="checkout-error">{{ form.city.errors|join:", " }}</span>
+                  {% endif %}
+                </div>
+              </div>
+            </div>
 
-<span>Total del pedido</span>
+            <div class="catalog-divider mt-2"></div>
 
-<strong class="order-price">
-${{ cart.get_total_price|floatformat:"0"|intcomma|cut:"," }}
-</strong>
+            <button type="submit" class="btn btn-coffee btn-lg w-100 checkout-submit">
+              <i class="fa-solid fa-lock me-2"></i>Realizar pedido
+            </button>
 
-</div>
+          </form>
+        </div><!-- /checkout-card -->
 
+        <p class="checkout-security-note">
+          <i class="fa-solid fa-shield-halved me-1"></i>
+          Tu información está protegida con cifrado SSL
+        </p>
 
-<form method="post" novalidate class="checkout-form">
-
-{% csrf_token %}
-
-<div class="form-group mb-3">
-<label>Nombre completo</label>
-{{ form.full_name }}
-</div>
-
-<div class="row">
-
-<div class="col-md-6 mb-3">
-<label>Email</label>
-{{ form.email }}
-</div>
-
-<div class="col-md-6 mb-3">
-<label>Dirección</label>
-{{ form.address }}
-</div>
-
-</div>
-
-<div class="row">
-
-<div class="col-md-6 mb-3">
-<label>Código postal</label>
-{{ form.postal_code }}
-</div>
-
-<div class="col-md-6 mb-3">
-<label>Ciudad</label>
-{{ form.city }}
-</div>
-
-</div>
-
-<button type="submit" class="btn btn-coffee w-100">
-Realizar pedido
-</button>
-
-</form>
-
-</div>
-
-</div>
-
-</div>
-
-</div>
-
+      </div>
+    </div>
+  </div>
 </section>
 
 {% endblock %}

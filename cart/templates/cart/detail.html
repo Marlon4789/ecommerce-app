@@ -1,187 +1,175 @@
 {% extends "layouts/base.html" %}
 {% load humanize %}
 
-{% block title %}
-Carrito de compras
-{% endblock %}
+{% block title %}Carrito — Kaboha Coffee{% endblock %}
 
 {% block content %}
 
-<!-- ====================================== -->
-<!-- SHOPPING CART -->
-<!-- ====================================== -->
-
-<section class="cart-section mb-5 pb-5">
-
-<div class="container">
-
-<h3 class="cart-title pt-4 mb-4">
-Tu carrito
-</h3>
-
-{% if cart|length > 0 %}
-
-<!-- TABLA RESPONSIVE -->
-
-<div class="table-responsive">
-
-<table class="table cart-table align-middle">
-
-<thead class="table-light">
-
-<tr>
-
-<th>Producto</th>
-<th>Precio</th>
-<th>Cantidad</th>
-<th>Total</th>
-<th></th>
-
-</tr>
-
-</thead>
-
-<tbody>
-
-{% for item in cart %}
-
-<tr>
-
-<td class="fw-medium">
-{{ item.product.name }}
-</td>
-
-<td>
-${{ item.price|floatformat:"0"|intcomma }}
-</td>
-
-<td>
-
-<form action="{% url 'cart:cart_add' item.product.id %}" method="post" class="d-flex gap-2 align-items-center">
-{% csrf_token %}
-
-<input type="number"
-name="quantity"
-value="{{ item.quantity }}"
-min="1"
-class="form-control form-control-sm"
-style="width:70px;">
-
-<input type="hidden" name="override" value="True">
-
-<button type="submit" class="btn btn-sm btn-outline-primary">
-<i class="fa-solid fa-rotate"></i>
-</button>
-
-</form>
-
-</td>
-
-
-<td class="fw-bold">
-${{ item.total_price|floatformat:"0"|intcomma }}
-</td>
-
-<td>
-
-<form action="{% url 'cart:cart_remove' item.product.id %}" method="post" style="display:inline;">
-{% csrf_token %}
-
-<button type="submit" class="btn btn-sm btn-outline-danger">
-<i class="fa-solid fa-trash"></i>
-</button>
-
-</form>
-
-</td>
-
-</tr>
-
-{% endfor %}
-
-</tbody>
-
-</table>
-
-</div>
-
-
-<!-- TOTAL Y BOTONES -->
-
-<div class="cart-actions mt-2 text-center text-md-center">
-
-<div class="row d-flex justify-content-center align-items-center">
-
-
-
-
-
-<div class="col-md-6 text-md-end">
-
- <h4 class="mb-3">
-
-Total:
-
-<strong>
-
-${{ cart.get_total_price|floatformat:"0"|intcomma }}
-
-</strong>
-
-</h4>
-
-<a href="{% url 'orders:order_create' %}"
-class="btn btn-coffee mb-3 mb-md-0">
-
-Finalizar compra
-
-</a>
-
-</div>
-
-<div class="col-md-6 text-md-center mb-3 mb-md-0">
-
-<a href="{% url 'shop:product_list' %}"
-class="btn btn-coffee-outline mt-md-5">
-
-<i class="fa-solid fa-arrow-left"></i>
-Seguir comprando
-    
-</a>
-
-</div>
-
-</div>
-
-</div>
-
-{% else %}
-
-<!-- CARRITO VACÍO -->
-
-<div class="text-center py-5">
-
-<i class="fa-solid fa-cart-shopping fa-3x mb-3 text-muted"></i>
-
-<h4>Tu carrito está vacío</h4>
-
-<p class="text-muted">
-Agrega productos para comenzar tu compra.
-</p>
-
-<a href="{% url 'shop:product_list' %}"
-class="btn btn-coffee mt-3">
-
-Ver productos
-
-</a>
-
-</div>
-
-{% endif %}
-
-</div>
-
+<section class="cart-section">
+  <div class="container">
+
+    <!-- ============================= -->
+    <!-- HEADER                        -->
+    <!-- ============================= -->
+    <div class="mb-4 pb-2">
+      <span class="catalog-hero-label">
+        <i class="fa-solid fa-cart-shopping me-1"></i> Mi pedido
+      </span>
+      <h1 class="cart-page-title">
+        Tu <span>carrito</span>
+        {% if cart|length > 0 %}
+          <span class="cart-count-badge">{{ cart|length }} producto{% if cart|length != 1 %}s{% endif %}</span>
+        {% endif %}
+      </h1>
+    </div>
+
+    {% if cart|length > 0 %}
+
+    <div class="row g-4 align-items-start">
+
+      <!-- ============================= -->
+      <!-- TABLA DE PRODUCTOS            -->
+      <!-- ============================= -->
+      <div class="col-lg-8">
+        <div class="cart-table-wrap">
+          <table class="cart-table">
+
+            <thead>
+              <tr>
+                <th>Producto</th>
+                <th>Precio</th>
+                <th>Cantidad</th>
+                <th>Subtotal</th>
+                <th></th>
+              </tr>
+            </thead>
+
+            <tbody>
+              {% for item in cart %}
+              <tr>
+
+                <!-- Producto -->
+                <td>
+                  <div class="cart-product-cell">
+                    {% if item.product.image %}
+                      <img src="{{ item.product.image }}"
+                           alt="{{ item.product.name }}"
+                           class="cart-product-img">
+                    {% else %}
+                      <div class="cart-product-img-placeholder">
+                        <i class="fa-solid fa-mug-hot"></i>
+                      </div>
+                    {% endif %}
+                    <span class="cart-product-name">{{ item.product.name }}</span>
+                  </div>
+                </td>
+
+                <!-- Precio unitario -->
+                <td class="cart-price-cell">
+                  ${{ item.price|floatformat:"0"|intcomma }}
+                </td>
+
+                <!-- Cantidad con update -->
+                <td>
+                  <form action="{% url 'cart:cart_add' item.product.id %}" method="post" class="cart-qty-form">
+                    {% csrf_token %}
+                    <input type="number"
+                           name="quantity"
+                           value="{{ item.quantity }}"
+                           min="1"
+                           class="cart-qty-input">
+                    <input type="hidden" name="override" value="True">
+                    <button type="submit" class="cart-qty-update-btn" title="Actualizar">
+                      <i class="fa-solid fa-rotate"></i>
+                    </button>
+                  </form>
+                </td>
+
+                <!-- Subtotal -->
+                <td class="cart-subtotal-cell">
+                  ${{ item.total_price|floatformat:"0"|intcomma }}
+                </td>
+
+                <!-- Eliminar -->
+                <td>
+                  <form action="{% url 'cart:cart_remove' item.product.id %}" method="post">
+                    {% csrf_token %}
+                    <button type="submit" class="cart-remove-btn" title="Eliminar">
+                      <i class="fa-solid fa-trash-can"></i>
+                    </button>
+                  </form>
+                </td>
+
+              </tr>
+              {% endfor %}
+            </tbody>
+
+          </table>
+        </div><!-- /cart-table-wrap -->
+
+        <!-- Volver al catálogo (mobile-friendly) -->
+        <a href="{% url 'shop:product_catalog' %}" class="btn btn-coffee-outline btn-sm">
+          <i class="fa-solid fa-arrow-left me-2"></i>Seguir comprando
+        </a>
+
+      </div><!-- /col-lg-8 -->
+
+      <!-- ============================= -->
+      <!-- PANEL RESUMEN                 -->
+      <!-- ============================= -->
+      <div class="col-lg-4">
+        <div class="cart-summary-panel">
+
+          <div class="cart-summary-title">
+            <i class="fa-solid fa-receipt"></i> Resumen
+          </div>
+
+          <div class="cart-summary-total-row">
+            <span class="cart-summary-total-label">Total del pedido</span>
+            <span class="cart-summary-total-value">
+              ${{ cart.get_total_price|floatformat:"0"|intcomma }}
+            </span>
+          </div>
+
+          <div class="catalog-divider"></div>
+
+          <a href="{% url 'orders:order_create' %}" class="btn btn-coffee w-100 mb-3">
+            <i class="fa-solid fa-lock me-2"></i>Finalizar compra
+          </a>
+
+          <a href="{% url 'shop:product_catalog' %}" class="btn btn-coffee-outline w-100">
+            <i class="fa-solid fa-arrow-left me-2"></i>Seguir comprando
+          </a>
+
+          <p class="cart-summary-note">
+            <i class="fa-solid fa-shield-halved me-1"></i>
+            Pago seguro con cifrado SSL
+          </p>
+
+        </div>
+      </div><!-- /col-lg-4 -->
+
+    </div><!-- /row -->
+
+    {% else %}
+
+    <!-- ============================= -->
+    <!-- CARRITO VACÍO                 -->
+    <!-- ============================= -->
+    <div class="cart-empty">
+      <i class="fa-solid fa-cart-shopping cart-empty-icon"></i>
+      <p class="cart-empty-title">Tu carrito está vacío</p>
+      <p class="cart-empty-sub">
+        Explora nuestra selección de cafés premium y agrega tus favoritos.
+      </p>
+      <a href="{% url 'shop:product_catalog' %}" class="btn btn-coffee">
+        <i class="fa-solid fa-arrow-right me-2"></i>Ver productos
+      </a>
+    </div>
+
+    {% endif %}
+
+  </div><!-- /container -->
 </section>
 
 {% endblock %}
