@@ -1,123 +1,79 @@
 {% extends "layouts/base.html" %}
 {% load humanize %}
-{% block title %}Proceso de Pago{% endblock %}
+{% block title %}Proceso de Pago — Kaboha Coffee{% endblock %}
 
 {% block content %}
 
 <section class="payment-section">
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-lg-5 col-md-7">
 
-<div class="container">
+        <div class="text-center mb-4">
+          <span class="catalog-hero-label">
+            <i class="fa-solid fa-lock me-1"></i> Pago seguro
+          </span>
+        </div>
 
-<div class="row justify-content-center">
+        <div class="payment-card">
 
-<div class="col-lg-5">
+          <h2 class="payment-title">
+            <i class="fa-solid fa-credit-card"></i> Proceso de pago
+          </h2>
 
-<div class="payment-card">
+          <p class="payment-total">
+            Total a pagar
+            <strong>${{ order.get_total_cost|floatformat:"0"|intcomma }} COP</strong>
+          </p>
 
-<h2 class="payment-title">
-<i class="fa-solid fa-credit-card"></i>
-Proceso de pago
-</h2>
+          <form id="payment-form">
+            <div id="payment-element"></div>
+            <div id="payment-errors" class="checkout-error mt-2" style="display:none;"></div>
+            <button type="submit" class="btn btn-coffee w-100 mt-4" id="submit-button">
+              <i class="fa-solid fa-lock me-2"></i>Proceder al pago
+            </button>
+          </form>
 
-<p class="payment-total">
+          <p class="checkout-security-note mt-3">
+            <i class="fa-solid fa-shield-halved me-1"></i>
+            Tus datos están protegidos con cifrado SSL
+          </p>
 
-Total a pagar
-
-<strong>
-${{ order.get_total_cost|floatformat:"0"|intcomma }} COP
-</strong>
-
-</p>
-
-<form id="payment-form">
-
-<div id="payment-element"></div>
-
-<div id="payment-errors" style="color: #dc3545; margin-top: 10px; display: none; font-weight: bold;"></div>
-
-<button type="submit" class="btn btn-coffee w-100" id="submit-button" style="margin-top: 20px;">
-
-Proceder al pago
-
-</button>
-
-</form>
-
-</div>
-
-</div>
-
-</div>
-
-</div>
-
+        </div>
+      </div>
+    </div>
+  </div>
 </section>
 
-<!-- Stripe JS -->
 <script src="https://js.stripe.com/v3/"></script>
-
 <script>
-console.log("✓ Iniciando Stripe Payment Element...");
-console.log("✓ Public Key:", '{{ stripe_public_key }}'.substring(0, 20) + "...");
-console.log("✓ Client Secret:", '{{ client_secret }}'.substring(0, 30) + "...");
+  const stripe   = Stripe('{{ stripe_public_key }}');
+  const elements = stripe.elements({ clientSecret: '{{ client_secret }}' });
+  const paymentElement = elements.create('payment');
+  paymentElement.mount('#payment-element');
 
-// ✅ Inicializar Stripe
-const stripe = Stripe('{{ stripe_public_key }}');
-console.log("✓ Stripe inicializado");
+  const form        = document.getElementById('payment-form');
+  const submitBtn   = document.getElementById('submit-button');
+  const errorsDiv   = document.getElementById('payment-errors');
 
-// ✅ Crear elements con clientSecret
-const elements = stripe.elements({
-    clientSecret: '{{ client_secret }}'
-});
-console.log("✓ Elements creados");
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin me-2"></i>Procesando...';
+    errorsDiv.style.display = 'none';
 
-// ✅ Montar Payment Element
-const paymentElement = elements.create('payment');
-paymentElement.mount('#payment-element');
-console.log("✓ Payment Element montado");
+    const { error } = await stripe.confirmPayment({
+      elements,
+      confirmParams: { return_url: '{{ return_url }}' },
+    });
 
-// ✅ Referencias a elementos
-const form = document.getElementById('payment-form');
-const submitButton = document.getElementById('submit-button');
-const paymentErrorsDiv = document.getElementById('payment-errors');
-
-// ✅ Manejador de submit
-form.addEventListener('submit', async (event) => {
-    console.log("✓ Form submitted!");
-    event.preventDefault();
-    submitButton.disabled = true;
-    submitButton.textContent = 'Procesando pago...';
-    paymentErrorsDiv.style.display = 'none';
-
-    try {
-        console.log("✓ Confirmando pago con Stripe...");
-        
-        // ✅ Confirmar el pago
-        const { error } = await stripe.confirmPayment({
-            elements,
-            confirmParams: {
-                return_url: '{{ return_url }}',
-            },
-        });
-
-        // ✅ Manejo de errores
-        if (error) {
-            console.error('❌ Error:', error.message);
-            paymentErrorsDiv.textContent = '❌ Error: ' + error.message;
-            paymentErrorsDiv.style.display = 'block';
-            submitButton.disabled = false;
-            submitButton.textContent = 'Proceder al pago';
-        }
-    } catch (error) {
-        console.error('❌ Error general:', error);
-        paymentErrorsDiv.textContent = '❌ Error: ' + error.message;
-        paymentErrorsDiv.style.display = 'block';
-        submitButton.disabled = false;
-        submitButton.textContent = 'Proceder al pago';
+    if (error) {
+      errorsDiv.textContent = error.message;
+      errorsDiv.style.display = 'block';
+      submitBtn.disabled = false;
+      submitBtn.innerHTML = '<i class="fa-solid fa-lock me-2"></i>Proceder al pago';
     }
-});
-
-console.log("✓ Stripe Payment Element completamente iniciado");
+  });
 </script>
 
 {% endblock %}

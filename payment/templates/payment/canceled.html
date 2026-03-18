@@ -1,44 +1,20 @@
 {% extends "layouts/base.html" %}
-
-{% block title %}Pago cancelado{% endblock %}
-
+{% block title %}Pago cancelado — Kaboha Coffee{% endblock %}
 {% block content %}
-
 <section class="payment-cancel">
-
-<div class="container">
-
-<div class="row justify-content-center">
-
-<div class="col-md-6 text-center">
-
-<div class="cancel-card">
-
-<i class="fa-solid fa-triangle-exclamation cancel-icon"></i>
-
-<h2>Pago cancelado</h2>
-
-<p>
-
-Tu pago fue cancelado.  
-Puedes intentarlo nuevamente.
-
-</p>
-
-<a href="{% url 'cart:cart_detail' %}" class="btn btn-coffee">
-
-Volver al carrito
-
-</a>
-
-</div>
-
-</div>
-
-</div>
-
-</div>
-
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-md-6 text-center">
+        <div class="cancel-card">
+          <i class="fa-solid fa-triangle-exclamation cancel-icon"></i>
+          <h2>Pago cancelado</h2>
+          <p>Tu pago fue cancelado. Puedes intentarlo nuevamente cuando quieras.</p>
+          <a href="{% url 'cart:cart_detail' %}" class="btn btn-coffee">
+            <i class="fa-solid fa-cart-shopping me-2"></i>Volver al carrito
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
 </section>
-
 {% endblock %}
