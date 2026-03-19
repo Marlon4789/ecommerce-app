@@ -34,9 +34,11 @@ start_dev.sh
 verify_deployment.sh
 
 # ── Logs ─────────────────────────────────
-logs/
+logs/*.log
+logs/*.log.*
 *.log
 *.log.*
+!logs/.gitkeep
 
 # ── Archivos estáticos compilados ────────
 staticfiles/
