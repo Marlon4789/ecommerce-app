@@ -1,47 +1,88 @@
-# Byte-compiled / optimized / DLL files
+# ─────────────────────────────────────────
+#  KABOHA COFFEE — .gitignore
+# ─────────────────────────────────────────
+
+# ── Entorno virtual ──────────────────────
+venv/
+env/
+.venv/
+ENV/
+
+# ── Variables de entorno (NUNCA subir) ───
+.env
+.env.*
+*.env
+
+# ── Base de datos local ──────────────────
+db.sqlite3
+*.sqlite3
+
+# ── Archivos de documentación interna ────
+# (fixes, bugs, comandos, guías de desarrollo)
+CAMBIOS_DETALLADOS.md
+COMANDOS_UTILES.sh
+FIXES_SUMMARY.md
+README_FIXES.md
+RESUMEN_BUGS_CORREGIDOS.md
+SOLUCION_BUGS.md
+SOLUCION_STRIPE_LOADING.md
+START_HERE.md
+STRIPE_PAYMENT_ELEMENT.md
+VERIFICATION_REPORT.md
+guia.txt
+start_dev.sh
+verify_deployment.sh
+
+# ── Logs ─────────────────────────────────
+logs/
+*.log
+*.log.*
+
+# ── Archivos estáticos compilados ────────
+staticfiles/
+
+# ── Archivos de media subidos ────────────
+media/
+
+# ── Python ───────────────────────────────
 __pycache__/
 *.py[cod]
 *$py.class
-
-# Django stuff:
-db.sqlite3
-guia.txt
-*.log
-*.pot
-*.pyc
 *.pyo
 *.pyd
+.Python
+*.egg
+*.egg-info/
+dist/
+build/
+eggs/
+parts/
+var/
+sdist/
+develop-eggs/
+.installed.cfg
+lib/
+lib64/
 
-# Media / uploads
-media/
+# ── Django ───────────────────────────────
+*.pot
+local_settings.py
 
+# ── Pytest / Coverage ────────────────────
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
 
-# Static files:
-staticfiles/
-
-# Local environment settings:
-.env
-*.env
-
-# Virtual environment:
-venv/
-env/
-.virtualenv/
-start_dev.sh
-COMANDOS_UTILES.sh
-
-
-# IDE files:
+# ── IDEs y editores ──────────────────────
 .vscode/
 .idea/
-*.sublime-workspace
-*.sublime-project
-
-# Node modules (if using npm or yarn for front-end):
-node_modules/
-
-# Backup files:
-*.bak
 *.swp
-*.orig
-*.save
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# ── Node (por si acaso) ──────────────────
+node_modules/
+npm-debug.log*
